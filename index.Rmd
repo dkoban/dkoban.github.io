@@ -26,10 +26,8 @@ knitr::opts_chunk$set(
 }
 </style>
 
-<div style="width:800px;">
-<div style="margin: 0 auto; width:700px;">
+<div style="margin-left: 50px; margin-right:50px;">
 **Abstract:** BotometerLite is advertised as a lightweight bot detector that improves scalability by focusing on only user profile information; furthermore, BotometerLite claims that using fewer features only entails a small compromise in individual accuracy. We test the validity of this claim by comparing Botometer with BotometerLite bot likelihood scores for 10,000 randomly sampled users. BotometerLite scores varied drastically from Botometer scores.   
-</div>
 </div> 
 
 ## Introduction
@@ -200,7 +198,13 @@ Future work for course project:
 - Update introduction to include other articles that have critiqued Botometer
 - Replicate results of Indiana University BotometerLite paper (Train a classifier to predict manually labeled bots and compare with BotometerLite)
 - Post code to github repo
-- Submit a post to Medium?
+
+Questions:
+
+- What statistical tests should we do to provide evidence Botometer and BotometerLite produce different results?  t-test for difference of means? F-test for difference of variance? Hotelling test across all bot scores?
+- What visualizations should we use?  tSNE separating accounts with CAP > 0.8 from those with CAP < 0.8? 
+- Is this study worth of pursuing for publication on Medium? or a peer-reviewed journal?
+
 
 ## References
 
