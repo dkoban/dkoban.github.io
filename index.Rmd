@@ -26,16 +26,18 @@ knitr::opts_chunk$set(
 }
 </style>
 
-## Abstract
-
-BotometerLite is advertised as a lightweight bot detector that improves scalability by focusing on only user profile information; furthermore, BotometerLite claims using fewer features only entails a small compromise in individual accuracy. We test the validity of this claim by comparing Botometer with BotometerLite bot likelihood scores for 10,000 randomly sampled users. BotometerLite scores varied drastically from Botometer scores.    
+<div style="width:800px;">
+<div style="margin: 0 auto; width:700px;">
+**Abstract:** BotometerLite is advertised as a lightweight bot detector that improves scalability by focusing on only user profile information; furthermore, BotometerLite claims that using fewer features only entails a small compromise in individual accuracy. We test the validity of this claim by comparing Botometer with BotometerLite bot likelihood scores for 10,000 randomly sampled users. BotometerLite scores varied drastically from Botometer scores.   
+</div>
+</div> 
 
 ## Introduction
 
 - Training and performance evaluation described in "Scalable and Generalizable Social Bot Detection through Data Selection" @yang2020scalable. 
 - BotometerLite released in September 2020.
 
-## Bot Type Scores
+### Bot Type Scores
 
 Bot scores describe how much an account acts like a specific kind of bot.
 https://botometer.osome.iu.edu/faq
@@ -46,17 +48,20 @@ https://botometer.osome.iu.edu/faq
 - **Self declared:** bots from botwiki.org
 - **Spammer:** accounts labeled as spambots from several datasets
 - **Other:** miscellaneous other bots obtained from manual annotation, user feedback, etc.
-- **Complete Automation Probability:** the probability, according to the Botometer model, that an account with this score or greater is controlled by software.
+
+**Complete Automation Probability** describes the probability, according to the Botometer model, that an account with this score or greater is at bot.
 
 ## Methodology
 
 1. Randomly sample _n_ accounts from Twitter API.
 2. Collect Botometer and BotometerLite bot likelihood scores.
-3. Calculate the correlation between scores.
+3. Calculate correlation between scores.
 
 ## Results
 
-1. BotometerLite is most similar to the Botometer fake follower and spammer scores with $R^2$ values of 0.394 and 0.334 respectively.  Hence, if Botometer scores are accurate, BotometerLite may be somewhat effective at identifying potential fake followers and spammers.  
+### Raw English Scores
+
+BotometerLite is most similar to the Botometer fake follower and spammer scores with $R^2$ values of 0.394 and 0.334, respectively.  Hence, if Botometer scores are accurate, BotometerLite may be somewhat effective at identifying some fake followers and spammers.
 
 ```{r, fig.width=14, fig.height=12}
 library(tidyverse)
@@ -126,7 +131,63 @@ The pearson correlation matrix ($R^2$ values are the square of the values of thi
 #![](correlation_heat_map.png){width=600px}
 </center>
 
+### Raw Universal Scores
+
+```{r, fig.width=14, fig.height=12}
+df <- left_join(bot_full, bot_lite, by = "id_str") %>%
+  filter(!is.na(bot_lite), !is.na(overall_raw_en)) 
+  
+df <- bind_rows(
+  df %>% select(id_str, screen_name, 
+                bot_full = astroturf_raw_un, bot_lite) %>%
+    mutate(type = "Astroturf"),
+  df %>% select(id_str, screen_name, 
+                bot_full = fake_follower_raw_un, bot_lite) %>%
+    mutate(type = "Fake Follower"),
+  df %>% select(id_str, screen_name, 
+                bot_full = financial_raw_un, bot_lite) %>%
+    mutate(type = "Financial"),
+  df %>% select(id_str, screen_name, 
+                bot_full = spammer_raw_un, bot_lite) %>%
+    mutate(type = "Spammer"),
+  df %>% select(id_str, screen_name, 
+                bot_full = self_declared_raw_un, bot_lite) %>%
+    mutate(type = "Self Declared"),
+  df %>% select(id_str, screen_name,
+                bot_full = other_raw_un, bot_lite) %>%
+    mutate(type = "Other"),
+  df %>% select(id_str, screen_name,
+                bot_full = overall_raw_un, bot_lite) %>%
+    mutate(type = "Overall"),
+  df %>% select(id_str, screen_name,
+                bot_full = cap_un, bot_lite) %>%
+    mutate(type = "Complete Automation Probability"))       
+
+lm_eqn = function(df){
+    m = lm(bot_full ~ bot_lite, df);
+    eq <- substitute(italic(r)^2~"="~r2, 
+         list(r2 = format(summary(m)$r.squared, digits = 3)))
+    as.character(as.expression(eq));                 
+}        
+
+require(plyr)
+eq <- ddply(df,.(type),lm_eqn)
+
+ggplot(data = df,
+       mapping = aes(x = bot_lite,
+                     y = bot_full)) +
+  geom_point(size = 0.5, color = "blue", alpha = 0.5) +
+   stat_smooth(method = "lm",color="red") +
+  geom_label(data=eq,aes(x = 0.85, y = 0.9,label=V1), 
+            parse = TRUE, inherit.aes=FALSE) +
+  facet_wrap(~type, ncol = 3) +
+  labs(title = "Botometer vs. BotometerLite Bot Likelihood Scores",
+         x = "BotometerLite Score",
+         y = "Botometer Score")
+```
+
 ## Conclusion
+
 
 
 ## References
