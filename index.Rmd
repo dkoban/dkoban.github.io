@@ -1,28 +1,106 @@
 ---
-title: "test"
-output: html_document
+title: "<center>Buyer Beware: A Comparison of Botometer vs. BotometerLite Bot Detection Performance</center>"
+output:
+  html_document:
+    toc: false
+    toc_float:
+      toc_collapsed: true
+    theme: lumen
+abstract: |
+  BotometerLite is advertised as a lightweight bot detector that improves scalability by focusing on only user profile information; furthermore, BotometerLite claims using fewer features only entails a small compromise in individual accuracy. We test the validity of this claim by comparing Botometer with BotometerLite bot likelihood scores for 10,000 randomly sampled users. BotometerLite scores varied drastically from Botometer scores.    
+  
+bibliography: citations.bib
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(
+	echo = FALSE,
+	message = FALSE,
+	warning = FALSE
+)
 ```
 
-## R Markdown
+## Introduction
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+- Training and performance evaluation described in "Scalable and Generalizable Social Bot Detection through Data Selection" @yang2020scalable. 
+- BotometerLite released in September 2020.
+- 
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+## Methodology
 
-```{r cars}
-summary(cars)
+1. Randomly sample _n_ accounts from Twitter API.
+2. Collect Botometer and BotometerLite bot likelihood scores.
+3. Calculate the correlation between scores.
+
+## Results
+```{r, fig.width=14, fig.height=12}
+library(tidyverse)
+library(readxl)
+library(ggplot2)
+
+bot_full <- read_excel("botometer_full.xlsx")
+bot_lite <- read_csv("botometer_scores_20Oct2020.csv") %>%
+  select(id_str = user_id, bot_lite = botscore) %>% 
+  mutate(id_str = id_str %>% as.character())
+
+df <- left_join(bot_full, bot_lite, by = "id_str") %>%
+  filter(!is.na(bot_lite), !is.na(overall_raw_en)) 
+  
+df <- bind_rows(
+  df %>% select(id_str, screen_name, 
+                bot_full = astroturf_raw_en, bot_lite) %>%
+    mutate(type = "Astroturf"),
+  df %>% select(id_str, screen_name, 
+                bot_full = fake_follower_raw_en, bot_lite) %>%
+    mutate(type = "Fake Follower"),
+  df %>% select(id_str, screen_name, 
+                bot_full = financial_raw_en, bot_lite) %>%
+    mutate(type = "Financial"),
+  df %>% select(id_str, screen_name, 
+                bot_full = spammer_raw_en, bot_lite) %>%
+    mutate(type = "Spammer"),
+  df %>% select(id_str, screen_name, 
+                bot_full = self_declared_raw_en, bot_lite) %>%
+    mutate(type = "Self Declared"),
+  df %>% select(id_str, screen_name,
+                bot_full = other_raw_en, bot_lite) %>%
+    mutate(type = "Other"),
+    df %>% select(id_str, screen_name,
+                bot_full = overall_raw_en, bot_lite) %>%
+    mutate(type = "Overall"))       
+
+lm_eqn = function(df){
+    m = lm(bot_full ~ bot_lite, df);
+    eq <- substitute(italic(r)^2~"="~r2, 
+         list(r2 = format(summary(m)$r.squared, digits = 3)))
+    as.character(as.expression(eq));                 
+}        
+
+require(plyr)
+eq <- ddply(df,.(type),lm_eqn)
+
+ggplot(data = df,
+       mapping = aes(x = bot_lite,
+                     y = bot_full)) +
+  geom_point(size = 0.5, color = "blue", alpha = 0.5) +
+   stat_smooth(method = "lm",color="red") +
+  geom_label(data=eq,aes(x = 0.85, y = 0.9,label=V1), 
+            parse = TRUE, inherit.aes=FALSE) +
+  facet_wrap(~type, ncol = 3) +
+  labs(title = "Botometer vs. BotometerLite Bot Likelihood Scores",
+         x = "BotometerLite Score",
+         y = "Botometer Score")
 ```
 
-## Including Plots
+<center>
+#![](correlation_heat_map.png){width=600px}
+</center>
 
-You can also embed plots, for example:
+## Conclusion
 
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## References
+
+---
+nocite: '@*'
+---
