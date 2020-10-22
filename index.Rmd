@@ -34,8 +34,15 @@ knitr::opts_chunk$set(
 
 ## Introduction
 
-- Training and performance evaluation described in "Scalable and Generalizable Social Bot Detection through Data Selection" @yang2020scalable. 
-- BotometerLite released in September 2020.
+Botometer is one of the most popular bot detection tools used in social science @rauchfleisch2020false. Botometer was initially launched in May 2014 and BotometerLite was released in September 2020. The training and performance evaluation of BotometerLite is described in "Scalable and Generalizable Social Bot Detection through Data Selection" @yang2020scalable. 
+
+@rauchfleisch2020false found Botometer scores are imprecise at estimating bots, especially in a different language, and prone to variance over time a high number of human users as bots and vice versa. 
+
+In this study, we seek to answer the following questions: 
+
+- **How similar are Botometer and BotometerLite ratings? **
+- **Is BotometerLite effective at identifying specific types of bots (e.g., spammers, fake followers, etc.)?**
+- **Can BotometerLite be used as an triage tool to identify a subset of accounts that require more extensive evaluation via Botometer?**
 
 ### Bot Type Scores
 
@@ -188,7 +195,12 @@ ggplot(data = df,
 
 ## Conclusion
 
+Future work for course project:
 
+- Update introduction to include other articles that have critiqued Botometer
+- Replicate results of Indiana University BotometerLite paper (Train a classifier to predict manually labeled bots and compare with BotometerLite)
+- Post code to github repo
+- Submit a post to Medium?
 
 ## References
 
