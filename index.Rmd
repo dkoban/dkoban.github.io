@@ -1,18 +1,12 @@
 ---
 title: |
-  <br><br>
-  <center>
-  Comparison of Botometer vs. BotometerLite Bot Detection Scores <br><br>
-  ![](bot_stock.png){width=400px}</center>
+  <center>Comparison of Botometer vs. BotometerLite Bot Detection Scores</center>
 output:
   html_document:
     toc: false
     toc_float:
       toc_collapsed: true
     theme: lumen
-abstract: |
-  BotometerLite is advertised as a lightweight bot detector that improves scalability by focusing on only user profile information; furthermore, BotometerLite claims using fewer features only entails a small compromise in individual accuracy. We test the validity of this claim by comparing Botometer with BotometerLite bot likelihood scores for 10,000 randomly sampled users. BotometerLite scores varied drastically from Botometer scores.    
-  
 bibliography: citations.bib
 ---
 
@@ -24,7 +18,17 @@ knitr::opts_chunk$set(
 )
 ```
 
+<style type="text/css">
+.main-container {
+  max-width: 1800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
 
+## Abstract
+
+BotometerLite is advertised as a lightweight bot detector that improves scalability by focusing on only user profile information; furthermore, BotometerLite claims using fewer features only entails a small compromise in individual accuracy. We test the validity of this claim by comparing Botometer with BotometerLite bot likelihood scores for 10,000 randomly sampled users. BotometerLite scores varied drastically from Botometer scores.    
 
 ## Introduction
 
