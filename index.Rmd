@@ -2,7 +2,7 @@
 title: "<center>Comparison of Botometer vs. BotometerLite Bot Detection Scores</center>"
 output:
   html_document:
-    toc: false
+    toc: true
     toc_float:
       toc_collapsed: true
     theme: lumen
