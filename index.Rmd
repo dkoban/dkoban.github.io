@@ -1,8 +1,12 @@
 ---
-title: "<center>Comparison of Botometer vs. BotometerLite Bot Detection Scores</center>"
+title: |
+  <br><br>
+  <center>
+  Comparison of Botometer vs. BotometerLite Bot Detection Scores <br><br>
+  ![](bot_stock.png){width=400px}</center>
 output:
   html_document:
-    toc: true
+    toc: false
     toc_float:
       toc_collapsed: true
     theme: lumen
@@ -19,6 +23,8 @@ knitr::opts_chunk$set(
 	warning = FALSE
 )
 ```
+
+
 
 ## Introduction
 
