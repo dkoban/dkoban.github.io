@@ -1,5 +1,5 @@
 ---
-title: "<center>Buyer Beware: A Comparison of Botometer vs. BotometerLite Bot Detection Performance</center>"
+title: "<center>Comparison of Botometer vs. BotometerLite Bot Detection Scores</center>"
 output:
   html_document:
     toc: false
@@ -24,7 +24,19 @@ knitr::opts_chunk$set(
 
 - Training and performance evaluation described in "Scalable and Generalizable Social Bot Detection through Data Selection" @yang2020scalable. 
 - BotometerLite released in September 2020.
-- 
+
+## Bot Type Scores
+
+Bot scores describe how much an account acts like a specific kind of bot.
+https://botometer.osome.iu.edu/faq
+
+- **Astroturf:** manually labeled political bots and accounts involved in follow trains that systematically delete content
+- **Fake follower:** bots purchased to increase follower counts
+- **Financial:** bots that post using cashtags
+- **Self declared:** bots from botwiki.org
+- **Spammer:** accounts labeled as spambots from several datasets
+- **Other:** miscellaneous other bots obtained from manual annotation, user feedback, etc.
+- **Complete Automation Probability:** the probability, according to the Botometer model, that an account with this score or greater is controlled by software.
 
 ## Methodology
 
@@ -33,6 +45,9 @@ knitr::opts_chunk$set(
 3. Calculate the correlation between scores.
 
 ## Results
+
+1. BotometerLite is most similar to the Botometer fake follower and spammer scores with $R^2$ values of 0.394 and 0.334 respectively.  Hence, if Botometer scores are accurate, BotometerLite may be somewhat effective at identifying potential fake followers and spammers.  
+
 ```{r, fig.width=14, fig.height=12}
 library(tidyverse)
 library(readxl)
@@ -65,9 +80,12 @@ df <- bind_rows(
   df %>% select(id_str, screen_name,
                 bot_full = other_raw_en, bot_lite) %>%
     mutate(type = "Other"),
-    df %>% select(id_str, screen_name,
+  df %>% select(id_str, screen_name,
                 bot_full = overall_raw_en, bot_lite) %>%
-    mutate(type = "Overall"))       
+    mutate(type = "Overall"),
+  df %>% select(id_str, screen_name,
+                bot_full = cap_en, bot_lite) %>%
+    mutate(type = "Complete Automation Probability"))       
 
 lm_eqn = function(df){
     m = lm(bot_full ~ bot_lite, df);
@@ -91,6 +109,8 @@ ggplot(data = df,
          x = "BotometerLite Score",
          y = "Botometer Score")
 ```
+
+The pearson correlation matrix ($R^2$ values are the square of the values of this matrix) also shows the scores are weakly correlated.
 
 <center>
 #![](correlation_heat_map.png){width=600px}
