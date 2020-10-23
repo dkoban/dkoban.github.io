@@ -191,6 +191,18 @@ ggplot(data = df,
          y = "Botometer Score")
 ```
 
+### CAP Distribution 
+
+27% of the sample users have a Complete Automation Probability (CAP) of 0.75 or greater.  Hence, if we apply a threshold of 0.75 to annotate bots in the data, roughly 1 out of 4 users in our sample would labeled as a bot.  This seems highly unlikely.
+
+```{r}
+#sum(bot_full$cap_en >= 0.75)/length(bot_full$cap_en)
+bot_full$cap_en %>% hist(main = "Distribution of Complete Automation Probability Scores", 
+                         xlab = "Complete Automation Probability")
+```
+
+
+
 ## Conclusion
 
 Future work for course project:
@@ -202,6 +214,7 @@ Future work for course project:
 Questions:
 
 - What statistical tests should we do to provide evidence Botometer and BotometerLite produce different results?  t-test for difference of means? F-test for difference of variance? Hotelling test across all bot scores?
+- Should we look at just the scores derived from english-speaking accounts or also include the universal scores?
 - What visualizations should we use?  tSNE separating accounts with CAP > 0.8 from those with CAP < 0.8? 
 - Is this study worth of pursuing for publication on Medium? or a peer-reviewed journal?
 
