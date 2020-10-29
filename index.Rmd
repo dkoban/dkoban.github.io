@@ -44,7 +44,7 @@ Botometer was initially launched in May 2014 and BotometerLite was released in S
 
 ### Contribution
 
-Many researchers annotate bots based on Botometer score thresholds based on precedent established in previous literature (add citations). Understanding how BotometerLite performs in comparison to Botometer is critical to prevent people from thinking BotometerLite can be used as a scalable substitute for Botometer.
+Many researchers annotate bots based on Botometer score thresholds, in line with the precedent established in previous literature (add citations). Understanding how BotometerLite performs in comparison to Botometer is critical to prevent people from thinking BotometerLite can be used as a scalable substitute for Botometer.
 
 ### Research Questions
 
