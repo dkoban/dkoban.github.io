@@ -36,7 +36,7 @@ Botometer is one of the most popular bot detection tools used in social science 
 
 @yuan2019examining used DeBot for large-scale bot annotations when examining tweets related to the 2015 California Disneyland measles outbreak. Whereas, @broniatowski2016effective used Botometer for small-scale bot annotations. 
 
-@dunn2020limited annotated bots based on Botometer scores of 0.5 of greater when assessing the limited role of bots in spreading vaccine-critical information.  Botometer's [FAQ page](https://botometer.osome.iu.edu/faq) explicitly states "It's tempting to set some arbitrary threshold score and consider everything above that number a bot and everything below a human, but we do not recommend this approach. Binary classification of accounts using two classes is problematic because few accounts are completely automated".  Instead, Botometer recommends setting a threshold on the CAP score.  @dunn2020limited acknowledges the number of bots was likely overestimated in this study and unlikely to affect the study results.  
+@dunn2020limited annotated bots based on Botometer scores of 0.5 of greater when assessing the limited role of bots in spreading vaccine-critical information.  Botometer's [FAQ page](https://botometer.osome.iu.edu/faq) explicitly states "It's tempting to set some arbitrary threshold score and consider everything above that number a bot and everything below a human, but we do not recommend this approach. Binary classification of accounts using two classes is problematic because few accounts are completely automated".  Instead, Botometer recommends setting a threshold on the CAP score.  @dunn2020limited acknowledges the imprecision inherent in bot detection and states the conclusions of this study are robust to differences related to imprecision of the bot proportion estimate.  
 
 Botometer was initially launched in May 2014 and BotometerLite was released in September 2020. BotometerLite improves scalability by focusing on only user profile information; furthermore, BotometerLite claims that using fewer features only entails a small compromise in individual accuracy @yang2020scalable. The training and performance evaluation of BotometerLite is described in "Scalable and Generalizable Social Bot Detection through Data Selection" @yang2020scalable. 
 
@@ -167,7 +167,7 @@ The pearson correlation matrix ($R^2$ values are the square of the values of thi
 
 27% of the sample users have a Complete Automation Probability (CAP) of 0.75 or greater.  Hence, if we apply a threshold of 0.75 to annotate bots in the data, roughly 1 out of 4 users in our sample would labeled as a bot.  
 
-Likewise, 53% of the sample users have a CAP of 0.5 or greater meaning over half of the bots would be labeled as bots.  This seems highly unlikely.
+Likewise, 53% of the sample users have a CAP of 0.5 or greater meaning over half of the accounts would be labeled as bots.  This seems highly unlikely.
 
 ```{r}
 #sum(bot_full$cap_en >= 0.75)/length(bot_full$cap_en)
