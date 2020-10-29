@@ -66,7 +66,9 @@ The Botometer [FAQ](https://botometer.osome.iu.edu/faq) section assigns bot scor
 - **Spammer:** accounts labeled as spambots from several datasets
 - **Other:** miscellaneous other bots obtained from manual annotation, user feedback, etc.
 
-**Complete Automation Probability** describes the probability, according to the Botometer model, that an account with this score or greater is at bot.
+**Complete Automation Probability** is defined as the probability, according to our models, that an account with this score or greater is a bot. 
+
+The Botometer website uses the CAP to express the percentage of accounts with bot score above a given account that are labeled as humans. Think of this as the chances that you would wrongly classify a human as a bot if you used this account's score as a threshold. You would want this probability to be pretty small, say less than 5%. (For the statisticians, this is a p-value.)
 
 ## Methodology
 
@@ -91,7 +93,7 @@ The following preliminary results explore the similarity between Botometer and B
 
 I am currently collecting botscores from the GWU Tweet Sets library to be used in the final paper.    
 
-### Raw English Scores
+### Raw Score Correlations
 
 BotometerLite is most similar to the Botometer fake follower and spammer scores with $R^2$ values of 0.394 and 0.334, respectively.  Hence, if Botometer scores are accurate, BotometerLite may be somewhat effective at identifying some fake followers and spammers.
 
@@ -163,7 +165,7 @@ The pearson correlation matrix ($R^2$ values are the square of the values of thi
 #![](correlation_heat_map.png){width=600px}
 </center>
 
-### CAP Distribution 
+### Estimated Bot Proportion
 
 2,352 (27%) of the sampled users have a Complete Automation Probability (CAP) of 0.75 or greater. CAP is the probability that an account with this score or greater is at bot. Therefore, if we model an accounts bot status as a Poisson binomial random variable, the expected number of bots is given by:
 
