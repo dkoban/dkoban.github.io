@@ -32,7 +32,7 @@ knitr::opts_chunk$set(
 
 ## Introduction
 
-Botometer is one of the most popular bot detection tools used in social science @rauchfleisch2020false. However, due to API rate limits associated with Botometer, @beskow2018introducing recommends a tiered framework for bot detection and suggests models that focus only on user profile information can be used at scale for general estimates of Bot penetration.
+Botometer is one of the most popular bot detection tools used in social science @rauchfleisch2020false. However, due to Botometer API rate limits, @beskow2018introducing recommends a tiered framework for bot detection and suggests models that focus only on user profile information can be used at scale for general estimates of bot penetration.
 
 @yuan2019examining used DeBot for large-scale bot annotations when examining tweets related to the 2015 California Disneyland measles outbreak. Whereas, @broniatowski2016effective used Botometer for small-scale bot annotations. 
 
@@ -53,7 +53,7 @@ In this study, we seek to answer the following questions:
 - How similar are Botometer and BotometerLite ratings? 
 - Is BotometerLite effective at identifying specific types of bots? In other words, are BotometerLite scores strongly correlated with any of the Botometer category scores (e.g., spammers, fake followers, etc.)?
 - Can BotometerLite be used as an triage tool to identify a subset of accounts that require more extensive evaluation via Botometer?
-- Do some topics have more assessed bots than others?  How to the topic-specific bot category scores compare to a random sample of twitter users?
+- Do some topics have more assessed bots than others?  How do the topic-specific bot category scores compare to a random sample of twitter users?
 
 ### Bot Type Scores
 
@@ -165,12 +165,15 @@ The pearson correlation matrix ($R^2$ values are the square of the values of thi
 
 ### CAP Distribution 
 
-27% of the sample users have a Complete Automation Probability (CAP) of 0.75 or greater.  Hence, if we apply a threshold of 0.75 to annotate bots in the data, roughly 1 out of 4 users in our sample would labeled as a bot.  This seems highly unlikely.
+27% of the sample users have a Complete Automation Probability (CAP) of 0.75 or greater.  Hence, if we apply a threshold of 0.75 to annotate bots in the data, roughly 1 out of 4 users in our sample would labeled as a bot.  
+
+Likewise, 53% of the sample users have a CAP of 0.5 or greater meaning over half of the bots would be labeled as bots.  This seems highly unlikely.
 
 ```{r}
 #sum(bot_full$cap_en >= 0.75)/length(bot_full$cap_en)
 bot_full$cap_en %>% hist(main = "Distribution of Complete Automation Probability Scores", 
                          xlab = "Complete Automation Probability")
+#sum(bot_full$cap_en >= 0.5)/length(bot_full$cap_en)
 ```
 
 ## Conclusion
