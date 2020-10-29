@@ -87,7 +87,7 @@ The Botometer [FAQ](https://botometer.osome.iu.edu/faq) section assigns bot scor
 
 ## Results
 
-The following preliminary results explore the similarity between Botometer and BotometerLite scores for 10,000 users sampled from a 5G conspiracy theory tweet set.  
+The following preliminary results explore the similarity between Botometer and BotometerLite scores for 8,685 users sampled from a 5G conspiracy theory tweet set. (Note: 10,000 users were submitted to Botometer and 8,685 accounts had scores.  I'm not sure what caused some to come back without a score, but think they may have be suspended or deactivated accounts.)  
 
 I am currently collecting botscores from the GWU Tweet Sets library to be used in the final paper.    
 
@@ -165,12 +165,26 @@ The pearson correlation matrix ($R^2$ values are the square of the values of thi
 
 ### CAP Distribution 
 
-27% of the sample users have a Complete Automation Probability (CAP) of 0.75 or greater.  Hence, if we apply a threshold of 0.75 to annotate bots in the data, roughly 1 out of 4 users in our sample would labeled as a bot.  
+2,352 (27%) of the sampled users have a Complete Automation Probability (CAP) of 0.75 or greater. CAP is the probability that an account with this score or greater is at bot. Therefore, if we model an accounts bot status as a Poisson binomial random variable, the expected number of bots is given by:
 
-Likewise, 53% of the sample users have a CAP of 0.5 or greater meaning over half of the accounts would be labeled as bots.  This seems highly unlikely.
+<center>
+$E[\sum x_{i}]=\sum p_{i}$
+</center>
+
+```{r, eval = FALSE}
+sum(bot_full$cap_en[bot_full$cap_en >= 0.75])/length(bot_full$cap_en)
+length(bot_full$cap_en)
+sum(bot_full$cap_en)/length(bot_full$cap_en)
+sum(bot_full$cap_en)
+```
+
+<br>
+Hence, we should expect 1,905 (21.9%) of the 8,685 accounts to be bots if we only consider CAP scores of 0.75 or greater.   
+
+If we don't set a CAP threshold and sum all CAP scores, the expected number of bots is 4,531 - 52.1% of the accounts. In other words, the Botometer CAP scores estimate that over half of the users discussing 5G on Twitter are bots.  
 
 ```{r}
-#sum(bot_full$cap_en >= 0.75)/length(bot_full$cap_en)
+#sum(bot_full$cap_en >= 0.75)
 bot_full$cap_en %>% hist(main = "Distribution of Complete Automation Probability Scores", 
                          xlab = "Complete Automation Probability")
 #sum(bot_full$cap_en >= 0.5)/length(bot_full$cap_en)
