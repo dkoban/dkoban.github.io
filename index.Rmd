@@ -41,6 +41,7 @@ In this study, we seek to answer the following questions:
 - **How similar are Botometer and BotometerLite ratings? **
 - **Is BotometerLite effective at identifying specific types of bots (e.g., spammers, fake followers, etc.)?**
 - **Can BotometerLite be used as an triage tool to identify a subset of accounts that require more extensive evaluation via Botometer?**
+- **Do some topics have more assessed bots than others?  Are any significantly more than a random sample of twitter users?**
 
 ### Bot Type Scores
 
@@ -58,9 +59,24 @@ https://botometer.osome.iu.edu/faq
 
 ## Methodology
 
-1. Randomly sample _n_ accounts from Twitter API.
-2. Collect Botometer and BotometerLite bot likelihood scores.
+1. Randomly sample 17,000 users from GWU's [Tweet Sets Library]( https://tweetsets.library.gwu.edu/datasets) in teh following collections:
+    - [Coronavirus](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/LW0BTB): collected March 3 2020 to June 9, 2020 
+    - 2016 election: collected July 13, 2016 to November 10, 2016
+    - News outlets: collected August 4, 2016 to May 12, 2020
+    - Charlottesville: August, 2017
+    - Random sample drawn from twitter API?
+  
+2. Collect Botometer and BotometerLite scores.
 3. Calculate correlation between scores.
+
+```{r}
+df<- read.table(file = "~/Documents/EM6574/COVID_version7/coronavirus-through-09-June-2020-23.txt",  sep="\t")
+```
+
+```{r}
+df$V1[1]
+```
+
 
 ## Results
 
@@ -136,61 +152,6 @@ The pearson correlation matrix ($R^2$ values are the square of the values of thi
 #![](correlation_heat_map.png){width=600px}
 </center>
 
-### Raw Universal Scores
-
-```{r, fig.width=14, fig.height=12}
-df <- left_join(bot_full, bot_lite, by = "id_str") %>%
-  filter(!is.na(bot_lite), !is.na(overall_raw_en)) 
-  
-df <- bind_rows(
-  df %>% select(id_str, screen_name, 
-                bot_full = astroturf_raw_un, bot_lite) %>%
-    mutate(type = "Astroturf"),
-  df %>% select(id_str, screen_name, 
-                bot_full = fake_follower_raw_un, bot_lite) %>%
-    mutate(type = "Fake Follower"),
-  df %>% select(id_str, screen_name, 
-                bot_full = financial_raw_un, bot_lite) %>%
-    mutate(type = "Financial"),
-  df %>% select(id_str, screen_name, 
-                bot_full = spammer_raw_un, bot_lite) %>%
-    mutate(type = "Spammer"),
-  df %>% select(id_str, screen_name, 
-                bot_full = self_declared_raw_un, bot_lite) %>%
-    mutate(type = "Self Declared"),
-  df %>% select(id_str, screen_name,
-                bot_full = other_raw_un, bot_lite) %>%
-    mutate(type = "Other"),
-  df %>% select(id_str, screen_name,
-                bot_full = overall_raw_un, bot_lite) %>%
-    mutate(type = "Overall"),
-  df %>% select(id_str, screen_name,
-                bot_full = cap_un, bot_lite) %>%
-    mutate(type = "Complete Automation Probability"))       
-
-lm_eqn = function(df){
-    m = lm(bot_full ~ bot_lite, df);
-    eq <- substitute(italic(r)^2~"="~r2, 
-         list(r2 = format(summary(m)$r.squared, digits = 3)))
-    as.character(as.expression(eq));                 
-}        
-
-require(plyr)
-eq <- ddply(df,.(type),lm_eqn)
-
-ggplot(data = df,
-       mapping = aes(x = bot_lite,
-                     y = bot_full)) +
-  geom_point(size = 0.5, color = "blue", alpha = 0.5) +
-   stat_smooth(method = "lm",color="red") +
-  geom_label(data=eq,aes(x = 0.85, y = 0.9,label=V1), 
-            parse = TRUE, inherit.aes=FALSE) +
-  facet_wrap(~type, ncol = 3) +
-  labs(title = "Botometer vs. BotometerLite Bot Likelihood Scores",
-         x = "BotometerLite Score",
-         y = "Botometer Score")
-```
-
 ### CAP Distribution 
 
 27% of the sample users have a Complete Automation Probability (CAP) of 0.75 or greater.  Hence, if we apply a threshold of 0.75 to annotate bots in the data, roughly 1 out of 4 users in our sample would labeled as a bot.  This seems highly unlikely.
@@ -200,8 +161,6 @@ ggplot(data = df,
 bot_full$cap_en %>% hist(main = "Distribution of Complete Automation Probability Scores", 
                          xlab = "Complete Automation Probability")
 ```
-
-
 
 ## Conclusion
 
