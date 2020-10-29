@@ -27,26 +27,37 @@ knitr::opts_chunk$set(
 </style>
 
 <div style="margin-left: 50px; margin-right:50px;">
-**Abstract:** BotometerLite is advertised as a lightweight bot detector that improves scalability by focusing on only user profile information; furthermore, BotometerLite claims that using fewer features only entails a small compromise in individual accuracy. We test the validity of this claim by comparing Botometer with BotometerLite bot likelihood scores for 10,000 randomly sampled users. BotometerLite scores varied drastically from Botometer scores.   
+**Abstract:** BotometerLite is advertised as a lightweight bot detector that improves scalability by focusing on only user profile information; furthermore, BotometerLite claims that using fewer features only entails a small compromise in individual accuracy. We test the validity of this claim by comparing Botometer with BotometerLite bot likelihood scores for 75,000 users across 5 data sets. We randomly sampled 15,000 users from the following data sets: Coronavirus, 2016 election, News outlets, Charlottesville, and the Twitter API. BotometerLite scores varied drastically from Botometer scores.   
 </div> 
 
 ## Introduction
 
-Botometer is one of the most popular bot detection tools used in social science @rauchfleisch2020false. Botometer was initially launched in May 2014 and BotometerLite was released in September 2020. The training and performance evaluation of BotometerLite is described in "Scalable and Generalizable Social Bot Detection through Data Selection" @yang2020scalable. 
+Botometer is one of the most popular bot detection tools used in social science @rauchfleisch2020false. However, due to API rate limits associated with Botometer, @beskow2018introducing recommends a tiered framework for bot detection and suggests models that focus only on user profile information can be used at scale for general estimates of Bot penetration.
+
+@yuan2019examining used DeBot for large-scale bot annotations when examining tweets related to the 2015 California Disneyland measles outbreak. Whereas, @broniatowski2016effective used Botometer for small-scale bot annotations. 
+
+@dunn2020limited annotated bots based on Botometer scores of 0.5 of greater when assessing the limited role of bots in spreading vaccine-critical information.  Botometer's [FAQ page](https://botometer.osome.iu.edu/faq) explicitly states "It's tempting to set some arbitrary threshold score and consider everything above that number a bot and everything below a human, but we do not recommend this approach. Binary classification of accounts using two classes is problematic because few accounts are completely automated".  Instead, Botometer recommends setting a threshold on the CAP score.  @dunn2020limited acknowledges the number of bots was likely overestimated in this study and unlikely to affect the study results.  
+
+Botometer was initially launched in May 2014 and BotometerLite was released in September 2020. BotometerLite improves scalability by focusing on only user profile information; furthermore, BotometerLite claims that using fewer features only entails a small compromise in individual accuracy @yang2020scalable. The training and performance evaluation of BotometerLite is described in "Scalable and Generalizable Social Bot Detection through Data Selection" @yang2020scalable. 
 
 @rauchfleisch2020false found Botometer scores are imprecise at estimating bots, especially in a different language, and prone to variance over time a high number of human users as bots and vice versa. 
 
+### Contribution
+
+Many researchers annotate bots based on Botometer score thresholds based on precedent established in previous literature (add citations). Understanding how BotometerLite performs in comparison to Botometer is critical to prevent people from thinking BotometerLite can be used as a scalable substitute for Botometer.
+
+### Research Questions
+
 In this study, we seek to answer the following questions: 
 
-- **How similar are Botometer and BotometerLite ratings? **
-- **Is BotometerLite effective at identifying specific types of bots (e.g., spammers, fake followers, etc.)?**
-- **Can BotometerLite be used as an triage tool to identify a subset of accounts that require more extensive evaluation via Botometer?**
-- **Do some topics have more assessed bots than others?  Are any significantly more than a random sample of twitter users?**
+- How similar are Botometer and BotometerLite ratings? 
+- Is BotometerLite effective at identifying specific types of bots? In other words, are BotometerLite scores strongly correlated with any of the Botometer category scores (e.g., spammers, fake followers, etc.)?
+- Can BotometerLite be used as an triage tool to identify a subset of accounts that require more extensive evaluation via Botometer?
+- Do some topics have more assessed bots than others?  How to the topic-specific bot category scores compare to a random sample of twitter users?
 
 ### Bot Type Scores
 
-Bot scores describe how much an account acts like a specific kind of bot.
-https://botometer.osome.iu.edu/faq
+The Botometer [FAQ](https://botometer.osome.iu.edu/faq) section assigns bot scores based on the following categories:
 
 - **Astroturf:** manually labeled political bots and accounts involved in follow trains that systematically delete content
 - **Fake follower:** bots purchased to increase follower counts
@@ -59,26 +70,26 @@ https://botometer.osome.iu.edu/faq
 
 ## Methodology
 
-1. Randomly sample 17,000 users from GWU's [Tweet Sets Library]( https://tweetsets.library.gwu.edu/datasets) in teh following collections:
+1. Randomly sample 20,000 tweet IDs from GWU's [Tweet Sets Library]( https://tweetsets.library.gwu.edu/datasets) in the following collections:
     - [Coronavirus](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/LW0BTB): collected March 3 2020 to June 9, 2020 
-    - 2016 election: collected July 13, 2016 to November 10, 2016
-    - News outlets: collected August 4, 2016 to May 12, 2020
-    - Charlottesville: August, 2017
-    - Random sample drawn from twitter API?
-  
-2. Collect Botometer and BotometerLite scores.
-3. Calculate correlation between scores.
-
-```{r}
-df<- read.table(file = "~/Documents/EM6574/COVID_version7/coronavirus-through-09-June-2020-23.txt",  sep="\t")
-```
-
-```{r}
-df$V1[1]
-```
-
+    - [2016 election](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/PDI7IN): collected July 13, 2016 to November 10, 2016
+    - [News outlets](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/2FIFLH): collected August 4, 2016 to May 12, 2020
+    - [Charlottesville](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/DVLJTO): August, 2017
+    - Random sample drawn from twitter API
+2. Rehydrate the tweet IDs via Twarc to obtain user IDs.
+3. Randomly sample 17,000 unique user IDs from the 20,000 tweets (some users are duplicated in the initil 20K sample).
+4. Query the Botometer API for 17,000 users (not all users will return a Botometer score)
+5. Query the BotometerLite API for 17,000 users (not all users will return a BotometerLite score)  
+6. Randomly select 15,000 users who have both Botometer and BotometerLite scores.
+7. Compare distribution of CAP scores across data sets.
+8. Compare proportion of bot category scores > k across data sets (e.g., how many accounts had astroturf scores greater than k in each data set? did one data set have siginificantly more than others?)
+9. Calculate correlation between Botometer and BotometerLite scores.
 
 ## Results
+
+The following preliminary results explore the similarity between Botometer and BotometerLite scores for 10,000 users sampled from a 5G conspiracy theory tweet set.  
+
+I am currently collecting botscores from the GWU Tweet Sets library to be used in the final paper.    
 
 ### Raw English Scores
 
@@ -167,16 +178,17 @@ bot_full$cap_en %>% hist(main = "Distribution of Complete Automation Probability
 Future work for course project:
 
 - Update introduction to include other articles that have critiqued Botometer
-- Replicate results of Indiana University BotometerLite paper (Train a classifier to predict manually labeled bots and compare with BotometerLite)
+- For EM6574 only, replicate results of Indiana University BotometerLite paper (Train a classifier to predict manually labeled bots and compare with BotometerLite)
 - Post code to github repo
 
 Questions:
 
+- Should I expand this beyond Botometer and include a comparison of scores generated from other models (e.g., DeBot, BotSlayer, etc.)
+- Has anyone used DeBot? I requested an API key but did not receive a response.
+- Do I have "the right" number for each of my samples (15,000 users per data set)?  Is a random sample appropriate?
 - What statistical tests should we do to provide evidence Botometer and BotometerLite produce different results?  t-test for difference of means? F-test for difference of variance? Hotelling test across all bot scores?
 - Should we look at just the scores derived from english-speaking accounts or also include the universal scores?
 - What visualizations should we use?  tSNE separating accounts with CAP > 0.8 from those with CAP < 0.8? 
-- Is this study worth of pursuing for publication on Medium? or a peer-reviewed journal?
-
 
 ## References
 
