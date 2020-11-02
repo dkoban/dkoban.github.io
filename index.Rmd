@@ -82,19 +82,20 @@ The Botometer website uses the CAP to express the percentage of accounts with bo
 
 ## Methodology
 
-1. Randomly sample 15,000 tweet IDs from GWU's [Tweet Sets Library]( https://tweetsets.library.gwu.edu/datasets) in the following collections:
+1. Randomly sample 20,000 tweet IDs from GWU's [Tweet Sets Library]( https://tweetsets.library.gwu.edu/datasets) in the following collections:
     - [Coronavirus](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/LW0BTB): collected March 3 2020 to June 9, 2020 
     - [2016 election](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/PDI7IN): collected July 13, 2016 to November 10, 2016
     - [News outlets](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/2FIFLH): collected August 4, 2016 to May 12, 2020
     - [Charlottesville](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/DVLJTO): August, 2017
     - Random sample drawn from twitter API
 2. Rehydrate the tweet IDs via Twarc to obtain user IDs.
-3. Randomly sample 12,000 unique user IDs from the 15,000 tweets (some users are duplicated in the initial 15K sample).
+3. Randomly sample 12,000 unique user IDs from the 20,000 tweets (some users are duplicated in the initial 15K sample).
 4. Enrich 10,000 user IDs with Botometer scores (not all users will return a Botometer score)
 5. Enrich with BotometerLite scores 
-6. Compare distribution of CAP scores across data sets.
-7. Compare proportion of bot category scores > k across data sets (e.g., how many accounts had astroturf scores greater than k in each data set? did one data set have siginificantly more than others?)
-8. Calculate correlation between Botometer and BotometerLite scores.
+6. **Filter tweet IDs to only those with an English status language.**
+7. Compare distribution of CAP scores across data sets.
+8. Compare proportion of bot category scores > k across data sets (e.g., how many accounts had astroturf scores greater than k in each data set? did one data set have siginificantly more than others?)
+9. Calculate correlation between Botometer and BotometerLite scores.
 
 ## Results
 
@@ -102,7 +103,7 @@ The following preliminary results explore the similarity between Botometer and B
 
 ### Bot Proportions by Type
 
-Number of accounts with raw scores greater than $k = 0.75$
+The table below shows the number of accounts with raw English scores greater than $k = 0.75$.  In this example, I did not exclude accounts with non-English status languages.
 
 ```{r}
 calc_bot_prop <- function(df, k){
@@ -122,6 +123,8 @@ return(df)
 k = 0.5
 corona <- read_csv("~/Documents/EM6574/covid_bot_scores_1Nov2020.csv") %>%
   mutate(id_str = id_str %>% as.character())
+corona_lang <- read_csv("~/Documents/EM6574/lang_id_covid.csv") %>%
+  mutate(id_str = id_str %>% as.character()) %>% distinct(id_str, status_lang)
 corona_bot_prop <- calc_bot_prop(corona, k = k)
 
 #random <- read_csv("~/Documents/EM6574/covid_bot_scores_1Nov2020.csv") 
@@ -180,8 +183,7 @@ cat_tbl <- data_frame(
                format_counts(random_bot_prop$astro, nrow(random)),
                paste0("<b>", format_counts(random_bot_prop$fake, nrow(random)),
                       "</b>"),
-               paste0("<b>", format_counts(random_bot_prop$spammer, nrow(random)),
-                      "</b>"),
+               format_counts(random_bot_prop$spammer, nrow(random)),
                format_counts(random_bot_prop$finance, nrow(random)),
                paste0("<b>", format_counts(random_bot_prop$self_declared, nrow(random)),
                       "</b>"),
@@ -193,11 +195,114 @@ cat_tbl <- data_frame(
 kable(cat_tbl)
 ```
 
-Coronavirus doesn't look much different than an random sample except it had relatively higher astroturf scores.  Given the political nature of COVID prevention measures, this result is somewhat expected. Random had the highest fake follower, spammer, and self declared scores. 5G had relatively low scores across all categories. This might be due to the fact, I only filtered the 5G data set for english language tweets. 
+The table below shows the number of english accounts with raw English scores greater than $k = 0.75$. In this example, I only icluded accounts with an English status language.  Applying English bot detection metrics to non-English users resulted increased bot detections.  Therefore, users must be careful to filter on status language to prevent inflating bot counts.   
+
+```{r}
+calc_bot_prop <- function(df, k){
+df <- data_frame(
+  "astro" = sum(df$astroturf_raw_en >= k),
+  "fake" = sum(df$fake_follower_raw_en >= k),
+  "spammer" = sum(df$spammer_raw_en >= k),
+  "finance" = sum(df$financial_raw_en >= k),
+  "self_declared" = sum(df$self_declared_raw_en >= k),
+  "other" = sum(df$other_raw_en >= k),
+  "overall" = sum(df$overall_raw_en >= k),
+  "cap" = sum(df$cap_en >= k),
+  "bot_lite" = sum(df$bot_lite >= k))
+return(df)
+}
+
+k = 0.5
+corona <- read_csv("~/Documents/EM6574/covid_bot_scores_1Nov2020.csv") %>%
+  mutate(id_str = id_str %>% as.character())
+corona_lang <- read_csv("~/Documents/EM6574/lang_id_covid.csv") %>%
+  mutate(id_str = id_str %>% as.character()) %>% distinct(id_str, status_lang)
+corona_lang <- corona_lang%>%
+  dplyr::group_by(id_str) %>% 
+  dplyr::summarise(count = n(), 
+                   status_lang = paste0(status_lang %>% unique(), collapse = ", "))
+corona <- corona %>% left_join(corona_lang, by = 'id_str') %>%
+  dplyr::filter(status_lang == 'en')
+corona_bot_prop <- calc_bot_prop(corona, k = k)
+
+#random <- read_csv("~/Documents/EM6574/covid_bot_scores_1Nov2020.csv") 
+files = list.files("~/Documents/EM6574/output_files")
+df_list <- list()
+for (i in 1:length(files)){
+  df_list[[i]] <- read_csv(paste0("~/Documents/EM6574/output_files/", files[i]),
+                           col_types = cols(screen_name = col_character()))
+}
+random <- bind_rows(df_list) %>% mutate(bot_lite = 1, 
+                                        id_str = id_str %>% as.character()) 
+random_lang <- read_csv("~/Documents/EM6574/lang_id_random.csv") %>%
+  mutate(id_str = id_str %>% as.character()) %>% distinct(id_str, status_lang)
+random_lang <- random_lang%>%
+  dplyr::group_by(id_str) %>% 
+  dplyr::summarise(count = n(), 
+                   status_lang = paste0(status_lang %>% unique(), collapse = ", "))
+random <- random %>% left_join(random_lang, by = 'id_str') %>%
+  dplyr::filter(status_lang == 'en')
+random_bot_prop <- calc_bot_prop(random, k = k)
+
+fiveg0 <- read_csv("~/Documents/EM6574/botometer_full_5G.csv") %>%
+  mutate(id_str = id_str %>% as.character())
+fiveg1 <- read_csv("~/Documents/EM6574/botometer_scores_20Oct2020.csv") %>%
+  dplyr::select(id_str = user_id, bot_lite = botscore) %>%
+  mutate(id_str = id_str %>% as.character())
+fiveg <- fiveg0 %>% left_join(fiveg1, by = "id_str") %>%
+  filter(!is.na(bot_lite))
+fiveg_bot_prop <- calc_bot_prop(fiveg, k = k)
+
+format_counts <- function(count, tot){
+  return(paste0(count, " (", round(count/tot,2), ")"))
+}
+
+#library(DT)
+cat_tbl <- data_frame(
+  "Category" = c("Sample Size", "Astroturf", "Fake Follower", "Spammer", "Financial", 
+                 "Self Declared", "Other", "Overall", "CAP", "BotometerLite"),
+  "Coronavirus" = c(nrow(corona),
+                    paste0("<b>", format_counts(corona_bot_prop$astro, nrow(corona)),
+                           "</b>"),
+                    format_counts(corona_bot_prop$fake, nrow(corona)),
+                    format_counts(corona_bot_prop$spammer, nrow(corona)),
+                    format_counts(corona_bot_prop$finance, nrow(corona)),
+                    format_counts(corona_bot_prop$self_declared, nrow(corona)),
+                    format_counts(corona_bot_prop$other, nrow(corona)),
+                    format_counts(corona_bot_prop$overall, nrow(corona)),
+                    format_counts(corona_bot_prop$cap, nrow(corona)),
+                    format_counts(corona_bot_prop$bot_lite, nrow(corona))),
+  "Election 2016" = c("-", "-", "-", "-", "-", "-", "-", "-", "-", "-"),
+  "News Outlets" = c("-", "-", "-", "-", "-", "-", "-", "-", "-", "-"),
+  "Charlottesville" = c("-", "-", "-", "-", "-", "-", "-", "-", "-", "-"),
+  "5G" = c(nrow(fiveg),
+           format_counts(fiveg_bot_prop$astro, nrow(fiveg)),
+           format_counts(fiveg_bot_prop$fake, nrow(fiveg)),
+           format_counts(fiveg_bot_prop$spammer, nrow(fiveg)),
+           format_counts(fiveg_bot_prop$finance, nrow(fiveg)),
+           format_counts(fiveg_bot_prop$self_declared, nrow(fiveg)),
+           format_counts(fiveg_bot_prop$other, nrow(fiveg)),
+           format_counts(fiveg_bot_prop$overall, nrow(fiveg)),
+           format_counts(fiveg_bot_prop$cap, nrow(fiveg)),
+           format_counts(fiveg_bot_prop$bot_lite, nrow(fiveg))),
+  "Random" = c(nrow(random),
+               format_counts(random_bot_prop$astro, nrow(random)),
+               paste0("<b>", format_counts(random_bot_prop$fake, nrow(random)),
+                      "</b>"),
+               format_counts(random_bot_prop$spammer, nrow(random)),
+               format_counts(random_bot_prop$finance, nrow(random)),
+               paste0("<b>", format_counts(random_bot_prop$self_declared, nrow(random)),
+                      "</b>"),
+               format_counts(random_bot_prop$other, nrow(random)),
+               format_counts(random_bot_prop$overall, nrow(random)),
+               format_counts(random_bot_prop$cap, nrow(random)),
+               format_counts(random_bot_prop$bot_lite, nrow(random))))
+#datatable(cat_tbl, filter = "none")
+kable(cat_tbl)
+```
+
 
 ### Botometer Score Distributions
-
-The 5G data set stands out the most in terms of bot counts and score distribution shapes.
 
 ```{r, fig.width=14, fig.height=4}
 plot_exp_hist <- function(x, title){
@@ -292,7 +397,7 @@ mtext("Botometer Lite Score Distribution",
 
 ### Raw Score Correlations
 
-BotometerLite is most similar to the Botometer fake follower and spammer scores with $R^2$ values of 0.313 and 0.26, respectively.  Hence, if Botometer scores are accurate, BotometerLite may be somewhat effective at identifying some fake followers and spammers.
+BotometerLite is most similar to the Botometer fake follower and spammer scores with $R^2$ values of 0.346 and 0.276, respectively.  Hence, if Botometer scores are accurate, BotometerLite may be somewhat effective at identifying some fake followers and spammers.
 
 ```{r, fig.width=14, fig.height=12}
 #all_data <- bind_rows(corona, fiveg, random)
