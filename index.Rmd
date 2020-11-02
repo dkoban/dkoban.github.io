@@ -193,7 +193,7 @@ cat_tbl <- data_frame(
 kable(cat_tbl)
 ```
 
-Coronavirus doesn't look much different than an random sample except it had relatively higher astroturf scores.  Given the political nature of COVID prevention measures, this result is somewhat expected. Random had the highest fake follower, spammer, and self declared scores. 5G had relatively low scores across all categories.
+Coronavirus doesn't look much different than an random sample except it had relatively higher astroturf scores.  Given the political nature of COVID prevention measures, this result is somewhat expected. Random had the highest fake follower, spammer, and self declared scores. 5G had relatively low scores across all categories. This might be due to the fact, I only filtered the 5G data set for english language tweets. 
 
 ### Botometer Score Distributions
 
@@ -395,7 +395,7 @@ Questions:
 - Should I expand this beyond Botometer and include a comparison of scores generated from other models (e.g., DeBot, BotSlayer, etc.)
 - Has anyone used DeBot? I requested an API key but did not receive a response.
 - Do I have "the right" number for each of my samples (10,000 users per data set)?  Is a random sample appropriate?
-- I forgot to filter on english only tweets when rehydrating the coronavirus tweets and pulling the random sample.  Do I need to repull my data???
+- I forgot to filter on english only tweets when rehydrating the coronavirus tweets and pulling the random sample.  Do I need to repull my data???  Can I cut my sample size down so I don't have to repull all the data?
 - What statistical tests should we do to provide evidence Botometer and BotometerLite produce different results?  t-test for difference of means? F-test for difference of variance? Hotelling test across all bot scores?
 - Should we look at just the scores derived from english-speaking accounts or also include the universal scores?
 - What visualizations should we use?  tSNE separating accounts with CAP > 0.8 from those with CAP < 0.8? 
