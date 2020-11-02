@@ -98,7 +98,7 @@ The Botometer website uses the CAP to express the percentage of accounts with bo
 
 ## Results
 
-The following preliminary results explore the similarity between Botometer and BotometerLite scores for 10,000 users from the Coronavirus and random sample of tweets. 
+The following preliminary results explore the similarity between Botometer and BotometerLite scores for users from the Coronavirus and 5G data sets, as well as a random sample of tweets collected on 1 November 2020. 
 
 ### Bot Proportions by Type
 
@@ -153,7 +153,8 @@ cat_tbl <- data_frame(
   "Category" = c("Sample Size", "Astroturf", "Fake Follower", "Spammer", "Financial", 
                  "Self Declared", "Other", "Overall", "CAP", "BotometerLite"),
   "Coronavirus" = c(nrow(corona),
-                    format_counts(corona_bot_prop$astro, nrow(corona)),
+                    paste0("<b>", format_counts(corona_bot_prop$astro, nrow(corona)),
+                           "</b>"),
                     format_counts(corona_bot_prop$fake, nrow(corona)),
                     format_counts(corona_bot_prop$spammer, nrow(corona)),
                     format_counts(corona_bot_prop$finance, nrow(corona)),
@@ -177,10 +178,13 @@ cat_tbl <- data_frame(
            format_counts(fiveg_bot_prop$bot_lite, nrow(fiveg))),
   "Random" = c(nrow(random),
                format_counts(random_bot_prop$astro, nrow(random)),
-               format_counts(random_bot_prop$fake, nrow(random)),
-               format_counts(random_bot_prop$spammer, nrow(random)),
+               paste0("<b>", format_counts(random_bot_prop$fake, nrow(random)),
+                      "</b>"),
+               paste0("<b>", format_counts(random_bot_prop$spammer, nrow(random)),
+                      "</b>"),
                format_counts(random_bot_prop$finance, nrow(random)),
-               format_counts(random_bot_prop$self_declared, nrow(random)),
+               paste0("<b>", format_counts(random_bot_prop$self_declared, nrow(random)),
+                      "</b>"),
                format_counts(random_bot_prop$other, nrow(random)),
                format_counts(random_bot_prop$overall, nrow(random)),
                format_counts(random_bot_prop$cap, nrow(random)),
@@ -189,9 +193,11 @@ cat_tbl <- data_frame(
 kable(cat_tbl)
 ```
 
+Coronavirus doesn't look much different than an random sample except it had relatively higher astroturf scores.  Given the political nature of COVID prevention measures, this result is somewhat expected. Random had the highest fake follower, spammer, and self declared scores. 5G had relatively low scores across all categories.
+
 ### Botometer Score Distributions
 
-High Astroturf, Fake Follower, and Financial scores are uncommon.
+The 5G data set stands out the most in terms of bot counts and score distribution shapes.
 
 ```{r, fig.width=14, fig.height=4}
 plot_exp_hist <- function(x, title){
@@ -254,6 +260,15 @@ hist(x= corona$other_raw_en, main = 'Coronavirus')
 hist(x= fiveg$other_raw_en, main = '5G')
 hist(x= random$other_raw_en, main = 'Random')
 mtext("Other Score Distribution", 
+      side = 3, line = 0, outer = TRUE, cex=1.5,font=2)
+```
+
+```{r, fig.width=14, fig.height=4}
+par(mfrow=c(1,3),oma = c(0, 0, 2, 0))
+hist(x= corona$overall_raw_en, main = 'Coronavirus')
+hist(x= fiveg$overall_raw_en, main = '5G')
+hist(x= random$overall_raw_en, main = 'Random')
+mtext("Overall Score Distribution", 
       side = 3, line = 0, outer = TRUE, cex=1.5,font=2)
 ```
 
@@ -379,7 +394,8 @@ Questions:
 
 - Should I expand this beyond Botometer and include a comparison of scores generated from other models (e.g., DeBot, BotSlayer, etc.)
 - Has anyone used DeBot? I requested an API key but did not receive a response.
-- Do I have "the right" number for each of my samples (15,000 users per data set)?  Is a random sample appropriate?
+- Do I have "the right" number for each of my samples (10,000 users per data set)?  Is a random sample appropriate?
+- I forgot to filter on english only tweets when rehydrating the coronavirus tweets and pulling the random sample.  Do I need to repull my data???
 - What statistical tests should we do to provide evidence Botometer and BotometerLite produce different results?  t-test for difference of means? F-test for difference of variance? Hotelling test across all bot scores?
 - Should we look at just the scores derived from english-speaking accounts or also include the universal scores?
 - What visualizations should we use?  tSNE separating accounts with CAP > 0.8 from those with CAP < 0.8? 
