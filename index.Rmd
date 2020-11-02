@@ -8,6 +8,8 @@ output:
       toc_collapsed: true
     theme: lumen
 bibliography: citations.bib
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -25,6 +27,14 @@ knitr::opts_chunk$set(
   margin-right: auto;
 }
 </style>
+
+```{r}
+library(knitr)
+library(tidyverse)
+library(ggplot2)
+require(plyr)
+```
+
 
 <div style="margin-left: 50px; margin-right:50px;">
 **Abstract:** BotometerLite is advertised as a lightweight bot detector that improves scalability by focusing on only user profile information; furthermore, BotometerLite claims that using fewer features only entails a small compromise in individual accuracy. We test the validity of this claim by comparing Botometer with BotometerLite bot likelihood scores for 75,000 users across 5 data sets. We randomly sampled 15,000 users from the following data sets: Coronavirus, 2016 election, News outlets, Charlottesville, and the Twitter API. BotometerLite scores varied drastically from Botometer scores.   
@@ -72,68 +82,232 @@ The Botometer website uses the CAP to express the percentage of accounts with bo
 
 ## Methodology
 
-1. Randomly sample 20,000 tweet IDs from GWU's [Tweet Sets Library]( https://tweetsets.library.gwu.edu/datasets) in the following collections:
+1. Randomly sample 15,000 tweet IDs from GWU's [Tweet Sets Library]( https://tweetsets.library.gwu.edu/datasets) in the following collections:
     - [Coronavirus](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/LW0BTB): collected March 3 2020 to June 9, 2020 
     - [2016 election](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/PDI7IN): collected July 13, 2016 to November 10, 2016
     - [News outlets](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/2FIFLH): collected August 4, 2016 to May 12, 2020
     - [Charlottesville](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/DVLJTO): August, 2017
     - Random sample drawn from twitter API
 2. Rehydrate the tweet IDs via Twarc to obtain user IDs.
-3. Randomly sample 17,000 unique user IDs from the 20,000 tweets (some users are duplicated in the initil 20K sample).
-4. Query the Botometer API for 17,000 users (not all users will return a Botometer score)
-5. Query the BotometerLite API for 17,000 users (not all users will return a BotometerLite score)  
-6. Randomly select 15,000 users who have both Botometer and BotometerLite scores.
-7. Compare distribution of CAP scores across data sets.
-8. Compare proportion of bot category scores > k across data sets (e.g., how many accounts had astroturf scores greater than k in each data set? did one data set have siginificantly more than others?)
-9. Calculate correlation between Botometer and BotometerLite scores.
+3. Randomly sample 12,000 unique user IDs from the 15,000 tweets (some users are duplicated in the initial 15K sample).
+4. Enrich 10,000 user IDs with Botometer scores (not all users will return a Botometer score)
+5. Enrich with BotometerLite scores 
+6. Compare distribution of CAP scores across data sets.
+7. Compare proportion of bot category scores > k across data sets (e.g., how many accounts had astroturf scores greater than k in each data set? did one data set have siginificantly more than others?)
+8. Calculate correlation between Botometer and BotometerLite scores.
 
 ## Results
 
-The following preliminary results explore the similarity between Botometer and BotometerLite scores for 8,685 users sampled from a 5G conspiracy theory tweet set. (Note: 10,000 users were submitted to Botometer and 8,685 accounts had scores.  I'm not sure what caused some to come back without a score, but think they may have be suspended or deactivated accounts.)  
+The following preliminary results explore the similarity between Botometer and BotometerLite scores for 10,000 users from the Coronavirus and random sample of tweets. 
 
-I am currently collecting botscores from the GWU Tweet Sets library to be used in the final paper.    
+### Bot Proportions by Type
+
+Number of accounts with raw scores greater than $k = 0.75$
+
+```{r}
+calc_bot_prop <- function(df, k){
+df <- data_frame(
+  "astro" = sum(df$astroturf_raw_en >= k),
+  "fake" = sum(df$fake_follower_raw_en >= k),
+  "spammer" = sum(df$spammer_raw_en >= k),
+  "finance" = sum(df$financial_raw_en >= k),
+  "self_declared" = sum(df$self_declared_raw_en >= k),
+  "other" = sum(df$other_raw_en >= k),
+  "overall" = sum(df$overall_raw_en >= k),
+  "cap" = sum(df$cap_en >= k),
+  "bot_lite" = sum(df$bot_lite >= k))
+return(df)
+}
+
+k = 0.5
+corona <- read_csv("~/Documents/EM6574/covid_bot_scores_1Nov2020.csv") %>%
+  mutate(id_str = id_str %>% as.character())
+corona_bot_prop <- calc_bot_prop(corona, k = k)
+
+#random <- read_csv("~/Documents/EM6574/covid_bot_scores_1Nov2020.csv") 
+files = list.files("~/Documents/EM6574/output_files")
+df_list <- list()
+for (i in 1:length(files)){
+  df_list[[i]] <- read_csv(paste0("~/Documents/EM6574/output_files/", files[i]),
+                           col_types = cols(screen_name = col_character()))
+}
+random <- bind_rows(df_list) %>% mutate(bot_lite = 1, 
+                                        id_str = id_str %>% as.character()) 
+random_bot_prop <- calc_bot_prop(random, k = k)
+
+fiveg0 <- read_csv("~/Documents/EM6574/botometer_full_5G.csv") %>%
+  mutate(id_str = id_str %>% as.character())
+fiveg1 <- read_csv("~/Documents/EM6574/botometer_scores_20Oct2020.csv") %>%
+  dplyr::select(id_str = user_id, bot_lite = botscore) %>%
+  mutate(id_str = id_str %>% as.character())
+fiveg <- fiveg0 %>% left_join(fiveg1, by = "id_str") %>%
+  filter(!is.na(bot_lite))
+fiveg_bot_prop <- calc_bot_prop(fiveg, k = k)
+
+format_counts <- function(count, tot){
+  return(paste0(count, " (", round(count/tot,2), ")"))
+}
+
+#library(DT)
+cat_tbl <- data_frame(
+  "Category" = c("Sample Size", "Astroturf", "Fake Follower", "Spammer", "Financial", 
+                 "Self Declared", "Other", "Overall", "CAP", "BotometerLite"),
+  "Coronavirus" = c(nrow(corona),
+                    format_counts(corona_bot_prop$astro, nrow(corona)),
+                    format_counts(corona_bot_prop$fake, nrow(corona)),
+                    format_counts(corona_bot_prop$spammer, nrow(corona)),
+                    format_counts(corona_bot_prop$finance, nrow(corona)),
+                    format_counts(corona_bot_prop$self_declared, nrow(corona)),
+                    format_counts(corona_bot_prop$other, nrow(corona)),
+                    format_counts(corona_bot_prop$overall, nrow(corona)),
+                    format_counts(corona_bot_prop$cap, nrow(corona)),
+                    format_counts(corona_bot_prop$bot_lite, nrow(corona))),
+  "Election 2016" = c("-", "-", "-", "-", "-", "-", "-", "-", "-", "-"),
+  "News Outlets" = c("-", "-", "-", "-", "-", "-", "-", "-", "-", "-"),
+  "Charlottesville" = c("-", "-", "-", "-", "-", "-", "-", "-", "-", "-"),
+  "5G" = c(nrow(fiveg),
+           format_counts(fiveg_bot_prop$astro, nrow(fiveg)),
+           format_counts(fiveg_bot_prop$fake, nrow(fiveg)),
+           format_counts(fiveg_bot_prop$spammer, nrow(fiveg)),
+           format_counts(fiveg_bot_prop$finance, nrow(fiveg)),
+           format_counts(fiveg_bot_prop$self_declared, nrow(fiveg)),
+           format_counts(fiveg_bot_prop$other, nrow(fiveg)),
+           format_counts(fiveg_bot_prop$overall, nrow(fiveg)),
+           format_counts(fiveg_bot_prop$cap, nrow(fiveg)),
+           format_counts(fiveg_bot_prop$bot_lite, nrow(fiveg))),
+  "Random" = c(nrow(random),
+               format_counts(random_bot_prop$astro, nrow(random)),
+               format_counts(random_bot_prop$fake, nrow(random)),
+               format_counts(random_bot_prop$spammer, nrow(random)),
+               format_counts(random_bot_prop$finance, nrow(random)),
+               format_counts(random_bot_prop$self_declared, nrow(random)),
+               format_counts(random_bot_prop$other, nrow(random)),
+               format_counts(random_bot_prop$overall, nrow(random)),
+               format_counts(random_bot_prop$cap, nrow(random)),
+               format_counts(random_bot_prop$bot_lite, nrow(random))))
+#datatable(cat_tbl, filter = "none")
+kable(cat_tbl)
+```
+
+### Botometer Score Distributions
+
+High Astroturf, Fake Follower, and Financial scores are uncommon.
+
+```{r, fig.width=14, fig.height=4}
+plot_exp_hist <- function(x, title){
+  h <- hist(x, breaks = 10, 
+            col = "lightgray", xlab = "Raw Score", 
+            main = title) 
+  xfit <- seq(min(x), max(x), length = 40) 
+  yfit <- dexp(xfit, rate = 1/mean(x)) 
+  yfit <- yfit * diff(h$mids[1:2]) * length(x) 
+  lines(xfit, yfit, col = "blue", lwd = 2)}
+
+plot_norm_hist <- function(x, title, y_max, breaks){
+  h <- hist(x, breaks = breaks, ylim = c(0, y_max),
+            col = "lightgray", xlab = "Raw Score", 
+            main = title) 
+  xfit <- seq(min(x), max(x), length = 40) 
+  yfit <- dnorm(xfit, mean = mean(x), sd = sd(x)) 
+  yfit <- yfit * diff(h$mids[1:2]) * length(x) 
+  lines(xfit, yfit, col = "blue", lwd = 2)}
+
+par(mfrow=c(1,3),oma = c(0, 0, 2, 0))
+plot_exp_hist(x= corona$astroturf_raw_en, title = 'Coronavirus')
+plot_exp_hist(x= fiveg$astroturf_raw_en, title = '5G')
+plot_exp_hist(x= random$astroturf_raw_en, title = 'Random')
+mtext("Astroturf Raw Score Distribution", 
+      side = 3, line = 0, outer = TRUE, cex=1.5,font=2)
+```
+
+
+```{r, fig.width=14, fig.height=4}
+par(mfrow=c(1,3),oma = c(0, 0, 2, 0))
+plot_exp_hist(x= corona$fake_follower_raw_en, title = 'Coronavirus')
+plot_exp_hist(x= fiveg$fake_follower_raw_en, title = '5G')
+plot_exp_hist(x= random$fake_follower_raw_en, title = 'Random')
+mtext("Fake Follower Raw Score Distribution", 
+      side = 3, line = 0, outer = TRUE, cex=1.5,font=2)
+```
+
+```{r, fig.width=14, fig.height=4}
+par(mfrow=c(1,3),oma = c(0, 0, 2, 0))
+plot_exp_hist(x= corona$financial_raw_en, title = 'Coronavirus')
+plot_exp_hist(x= fiveg$financial_raw_en, title = '5G')
+plot_exp_hist(x= random$financial_raw_en, title = 'Random')
+mtext("Financial Raw Score Distribution", 
+      side = 3, line = 0, outer = TRUE, cex=1.5,font=2)
+```
+
+```{r, fig.width=14, fig.height=4}
+par(mfrow=c(1,3),oma = c(0, 0, 2, 0))
+plot_exp_hist(x= corona$self_declared_raw_en, title = 'Coronavirus')
+plot_exp_hist(x= fiveg$self_declared_raw_en, title = '5G')
+plot_exp_hist(x= random$self_declared_raw_en, title = 'Random')
+mtext("Self Declared Score Distribution", 
+      side = 3, line = 0, outer = TRUE, cex=1.5,font=2)
+```
+
+```{r, fig.width=14, fig.height=4}
+par(mfrow=c(1,3),oma = c(0, 0, 2, 0))
+hist(x= corona$other_raw_en, main = 'Coronavirus')
+hist(x= fiveg$other_raw_en, main = '5G')
+hist(x= random$other_raw_en, main = 'Random')
+mtext("Other Score Distribution", 
+      side = 3, line = 0, outer = TRUE, cex=1.5,font=2)
+```
+
+```{r, fig.width=14, fig.height=4}
+par(mfrow=c(1,3),oma = c(0, 0, 2, 0))
+hist(x= corona$cap_en, main = 'Coronavirus')
+hist(x= fiveg$cap_en, main = '5G')
+hist(x= random$cap_en, main = 'Random')
+mtext("CAP Score Distribution", 
+      side = 3, line = 0, outer = TRUE, cex=1.5,font=2)
+```
+
+```{r, fig.width=14, fig.height=4}
+par(mfrow=c(1,3),oma = c(0, 0, 2, 0))
+plot_exp_hist(x= corona$bot_lite, title = 'Coronavirus')
+plot_exp_hist(x= fiveg$bot_lite, title = '5G')
+plot_exp_hist(x= random$bot_lite, title = 'Random')
+mtext("Botometer Lite Score Distribution", 
+      side = 3, line = 0, outer = TRUE, cex=1.5,font=2)
+```
 
 ### Raw Score Correlations
 
-BotometerLite is most similar to the Botometer fake follower and spammer scores with $R^2$ values of 0.394 and 0.334, respectively.  Hence, if Botometer scores are accurate, BotometerLite may be somewhat effective at identifying some fake followers and spammers.
+BotometerLite is most similar to the Botometer fake follower and spammer scores with $R^2$ values of 0.313 and 0.26, respectively.  Hence, if Botometer scores are accurate, BotometerLite may be somewhat effective at identifying some fake followers and spammers.
 
 ```{r, fig.width=14, fig.height=12}
-library(tidyverse)
-library(readxl)
-library(ggplot2)
-
-bot_full <- read_excel("botometer_full.xlsx")
-bot_lite <- read_csv("botometer_scores_20Oct2020.csv") %>%
-  select(id_str = user_id, bot_lite = botscore) %>% 
-  mutate(id_str = id_str %>% as.character())
-
-df <- left_join(bot_full, bot_lite, by = "id_str") %>%
-  filter(!is.na(bot_lite), !is.na(overall_raw_en)) 
+#all_data <- bind_rows(corona, fiveg, random)
+all_data <- bind_rows(corona, fiveg)
+all_data <- all_data[!is.na(all_data$cap_en),]
   
-df <- bind_rows(
-  df %>% select(id_str, screen_name, 
-                bot_full = astroturf_raw_en, bot_lite) %>%
+all_data_stack <- bind_rows(
+  all_data %>% dplyr::select(id_str, screen_name, 
+                       bot_full = astroturf_raw_en, bot_lite) %>%
     mutate(type = "Astroturf"),
-  df %>% select(id_str, screen_name, 
-                bot_full = fake_follower_raw_en, bot_lite) %>%
+  all_data %>% dplyr::select(id_str, screen_name, 
+                       bot_full = fake_follower_raw_en, bot_lite) %>%
     mutate(type = "Fake Follower"),
-  df %>% select(id_str, screen_name, 
-                bot_full = financial_raw_en, bot_lite) %>%
+  all_data %>% dplyr::select(id_str, screen_name, 
+                       bot_full = financial_raw_en, bot_lite) %>%
     mutate(type = "Financial"),
-  df %>% select(id_str, screen_name, 
-                bot_full = spammer_raw_en, bot_lite) %>%
+  all_data %>% dplyr::select(id_str, screen_name, 
+                       bot_full = spammer_raw_en, bot_lite) %>%
     mutate(type = "Spammer"),
-  df %>% select(id_str, screen_name, 
-                bot_full = self_declared_raw_en, bot_lite) %>%
+  all_data %>% dplyr::select(id_str, screen_name, 
+                       bot_full = self_declared_raw_en, bot_lite) %>%
     mutate(type = "Self Declared"),
-  df %>% select(id_str, screen_name,
-                bot_full = other_raw_en, bot_lite) %>%
+  all_data %>% dplyr::select(id_str, screen_name,
+                       bot_full = other_raw_en, bot_lite) %>%
     mutate(type = "Other"),
-  df %>% select(id_str, screen_name,
-                bot_full = overall_raw_en, bot_lite) %>%
+  all_data %>% dplyr::select(id_str, screen_name,
+                       bot_full = overall_raw_en, bot_lite) %>%
     mutate(type = "Overall"),
-  df %>% select(id_str, screen_name,
-                bot_full = cap_en, bot_lite) %>%
+  all_data %>% dplyr::select(id_str, screen_name,
+                       bot_full = cap_en, bot_lite) %>%
     mutate(type = "Complete Automation Probability"))       
 
 lm_eqn = function(df){
@@ -143,10 +317,9 @@ lm_eqn = function(df){
     as.character(as.expression(eq));                 
 }        
 
-require(plyr)
-eq <- ddply(df,.(type),lm_eqn)
+eq <- ddply(all_data_stack,.(type),lm_eqn)
 
-ggplot(data = df,
+ggplot(data = all_data_stack,
        mapping = aes(x = bot_lite,
                      y = bot_full)) +
   geom_point(size = 0.5, color = "blue", alpha = 0.5) +
@@ -159,37 +332,39 @@ ggplot(data = df,
          y = "Botometer Score")
 ```
 
-The pearson correlation matrix ($R^2$ values are the square of the values of this matrix) also shows the scores are weakly correlated.
+### Expected Bot Count by CAP
 
-<center>
-#![](correlation_heat_map.png){width=600px}
-</center>
-
-### Estimated Bot Proportion
-
-2,352 (27%) of the sampled users have a Complete Automation Probability (CAP) of 0.75 or greater. CAP is the probability that an account with this score or greater is at bot. Therefore, if we model an accounts bot status as a Poisson binomial random variable, the expected number of bots is given by:
+CAP is the probability that an account with this score or greater is a bot. Therefore, if we model an accounts bot status as a Poisson binomial random variable, the expected number of bots is given by:
 
 <center>
 $E[\sum x_{i}]=\sum p_{i}$
 </center>
 
-```{r, eval = FALSE}
-sum(bot_full$cap_en[bot_full$cap_en >= 0.75])/length(bot_full$cap_en)
-length(bot_full$cap_en)
-sum(bot_full$cap_en)/length(bot_full$cap_en)
-sum(bot_full$cap_en)
+```{r, eval = TRUE}
+all_data <- bind_rows(corona, fiveg, random)
+all_data <- all_data[!is.na(all_data$cap_en), ]
+#sum(all_data$cap_en[all_data$cap_en >= 0.75])/length(all_data$cap_en)
+#length(all_data$cap_en)
+#sum(all_data$cap_en)/length(all_data$cap_en)
+#sum(all_data$cap_en)
 ```
 
 <br>
-Hence, we should expect 1,905 (21.9%) of the 8,685 accounts to be bots if we only consider CAP scores of 0.75 or greater.   
+Hence, we should expect `r sum(all_data$cap_en) %>% as.integer()` (`r round(100*sum(all_data$cap_en)/length(all_data$cap_en),1)`%) of the `r length(all_data$cap_en)` accounts to be bots. 
 
-If we don't set a CAP threshold and sum all CAP scores, the expected number of bots is 4,531 - 52.1% of the accounts. In other words, the Botometer CAP scores estimate that over half of the users discussing 5G on Twitter are bots.  
+Expected bots by data set:
 
-```{r}
-#sum(bot_full$cap_en >= 0.75)
-bot_full$cap_en %>% hist(main = "Distribution of Complete Automation Probability Scores", 
-                         xlab = "Complete Automation Probability")
-#sum(bot_full$cap_en >= 0.5)/length(bot_full$cap_en)
+- Coronavirus: `r sum(corona$cap_en) %>% as.integer()` (`r round(100*sum(corona$cap_en)/length(corona$cap_en),1)`%) of `r length(corona$cap_en)` accounts.
+- 5G: `r sum(fiveg$cap_en) %>% as.integer()` (`r round(100*sum(fiveg$cap_en)/length(fiveg$cap_en),1)`%) of `r length(fiveg$cap_en)` accounts.
+- Random: `r sum(random$cap_en) %>% as.integer()` (`r round(100*sum(random$cap_en)/length(random$cap_en),1)`%) of `r length(random$cap_en)` accounts.
+
+```{r, fig.width=14, fig.height=4}
+par(mfrow=c(1,3),oma = c(0, 0, 2, 0))
+hist(x= corona$cap_en, main = 'Coronavirus')
+hist(x= fiveg$cap_en, main = '5G')
+hist(x= random$cap_en, main = 'Random')
+mtext("CAP Score Distribution", 
+      side = 3, line = 0, outer = TRUE, cex=1.5,font=2)
 ```
 
 ## Conclusion
@@ -208,6 +383,13 @@ Questions:
 - What statistical tests should we do to provide evidence Botometer and BotometerLite produce different results?  t-test for difference of means? F-test for difference of variance? Hotelling test across all bot scores?
 - Should we look at just the scores derived from english-speaking accounts or also include the universal scores?
 - What visualizations should we use?  tSNE separating accounts with CAP > 0.8 from those with CAP < 0.8? 
+
+
+The pearson correlation matrix ($R^2$ values are the square of the values of this matrix) also shows the scores are weakly correlated.
+
+<center>
+#![](correlation_heat_map.png){width=600px}
+</center>
 
 ## References
 
