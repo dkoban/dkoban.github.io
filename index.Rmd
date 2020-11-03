@@ -499,6 +499,22 @@ mtext("CAP Score Distribution",
 
 ### Profile Info of Suspected Bots
 
+Users with CAP bot scores >= 0.85.
+
+```{r}
+library(DT)
+covid_user <- read_csv("~/Documents/EM6574/covid/covid_user_info.csv") %>%
+  mutate(id_str = id_str %>% as.character())
+covid_overall <- corona %>% dplyr::select(id_str, cap_en, bot_lite) %>%
+  dplyr::filter(cap_en >= 0.85) %>%
+  left_join(covid_user, by = "id_str") %>%
+  dplyr::select(name, screen_name, 
+                cap_en, bot_lite,
+                followers_count, friends_count, favourites_count, verified) %>%
+  arrange(desc(cap_en)) %>% distinct()
+datatable(covid_overall)
+```
+
 Users with overall bot scores >= 0.75.
 
 ```{r}
