@@ -448,35 +448,31 @@ ggplot(data = all_data_stack,
 
 ### Expected Bot Count by CAP
 
-CAP is the probability that an account with this score or greater is a bot. Therefore, if we model an accounts bot status as a Poisson binomial random variable, the expected number of bots is given by:
-
-<center>
-$E[\sum x_{i}]=\sum p_{i}$
-</center>
+CAP is the probability that an account with this score or greater is a bot. The Botometer website uses the CAP to express the percentage of accounts with bot score above a given account that are labeled as humans. Think of this as the chances that you would wrongly classify a human as a bot if you used this account's score as a threshold. You would want this probability to be pretty small, say less than 5%. (For the statisticians, this is a p-value.)
 
 ```{r, eval = TRUE}
 all_data <- bind_rows(corona, fiveg, random)
 all_data <- all_data[!is.na(all_data$cap_en), ]
-#sum(all_data$cap_en[all_data$cap_en >= 0.75])/length(all_data$cap_en)
+#sum(all_data$cap_en[all_data$cap_en >= 0.85])/length(all_data$cap_en)
 #length(all_data$cap_en)
 #sum(all_data$cap_en)/length(all_data$cap_en)
 #sum(all_data$cap_en)
 ```
 
 <br>
-Hence, we should expect `r sum(all_data$cap_en) %>% as.integer()` (`r round(100*sum(all_data$cap_en)/length(all_data$cap_en),1)`%) of the `r length(all_data$cap_en)` accounts to be bots. 
+Hence, we should expect `r sum(all_data$cap_en>=0.95)` (`r round(100*sum(all_data$cap_en>=0.95)/length(all_data$cap_en),1)`%) of the `r length(all_data$cap_en)` accounts to be bots if we use a threshold of >= 0.95. 
 
 ```{r}
 cat_tbl <- data_frame(
-  "Category" = c("Sum English CAP",
-                 "Sum Universal CAP",
+  "Category" = c("English CAP >= 0.95",
+                 "Universal CAP >= 0.95",
                  "English Overall k >= 0.75",
                  "Universal Overall k >= 0.75",
                  "BotometerLite k >= 0.75"),
-  "Expected # of Bots" = c(paste0(round(sum(all_data$cap_en)), " (",
-                           round(sum(all_data$cap_en)/nrow(all_data),2), ")"),
-                           paste0(round(sum(all_data$cap_un)), " (",
-                           round(sum(all_data$cap_un)/nrow(all_data),2), ")"),
+  "Expected # of Bots" = c(paste0(round(sum(all_data$cap_en >= 0.95)), " (",
+                           round(sum(all_data$cap_en>=0.95)/nrow(all_data),3), ")"),
+                           paste0(round(sum(all_data$cap_un) >= 0.95), " (",
+                           round(sum(all_data$cap_un>=0.95)/nrow(all_data),3), ")"),
                            format_counts(sum(all_data$overall_raw_en >= 0.75),
                                          nrow(all_data)),
                            format_counts(sum(all_data$overall_raw_un >= 0.75),
@@ -488,9 +484,9 @@ kable(cat_tbl)
 
 Expected bots by data set based on English CAP scores:
 
-- Coronavirus: `r sum(corona$cap_en) %>% as.integer()` (`r round(100*sum(corona$cap_en)/length(corona$cap_en),1)`%) of `r length(corona$cap_en)` accounts.
-- 5G: `r sum(fiveg$cap_en) %>% as.integer()` (`r round(100*sum(fiveg$cap_en)/length(fiveg$cap_en),1)`%) of `r length(fiveg$cap_en)` accounts.
-- Random: `r sum(random$cap_en) %>% as.integer()` (`r round(100*sum(random$cap_en)/length(random$cap_en),1)`%) of `r length(random$cap_en)` accounts.
+- Coronavirus: `r sum(corona$cap_en>=0.95) %>% as.integer()` (`r round(100*sum(corona$cap_en>=0.95)/length(corona$cap_en),1)`%) of `r length(corona$cap_en)` accounts.
+- 5G: `r sum(fiveg$cap_en>=0.95) %>% as.integer()` (`r round(100*sum(fiveg$cap_en>=0.95)/length(fiveg$cap_en),1)`%) of `r length(fiveg$cap_en)` accounts.
+- Random: `r sum(random$cap_en>=0.95) %>% as.integer()` (`r round(100*sum(random$cap_en>=0.95)/length(random$cap_en),1)`%) of `r length(random$cap_en)` accounts.
 
 ```{r, fig.width=14, fig.height=4}
 par(mfrow=c(1,3),oma = c(0, 0, 2, 0))
