@@ -11,3 +11,9 @@ The GEN Donald R. Keith Memorial Capstone Conference is a forum for undergraduat
 - Presentation slides due: 20 April 2026
 - Capstone Conference: 23 April 2026
 - The Microsoft CMT service was used for managing the peer-reviewing process for this conference. This service was provided for free by Microsoft and they bore all expenses, including costs for Azure cloud services as well as for software development and support.
+
+<a href="https://raw.githubusercontent.com/dkoban/dkoban.github.io/master/GDRKMCC-26_Paper_Template.docx"
+   download>
+  📄 Download Paper Template (Word)
+</a>
+
