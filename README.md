@@ -15,15 +15,13 @@ The GEN Donald R. Keith Memorial Capstone Conference is a forum for undergraduat
 <a href="/templates/GDRKMCC-26_Paper_Template.docx" download>
   📄 Download Paper Template (Word)
 </a>
-<br>
 <small>
 If the file opens in your browser, right-click → “Save As”
-</small>>
-
+</small>
+<br> 
 <a href="/templates/Overleaf_LaTex_ConferencePaperTemplate.pdf" download>
-  📄 Download Paper Template (Word)
+  📄 Download Paper Template (LaTex)
 </a>
-<br>
 <small>
 If the file opens in your browser, right-click → “Save As”
-</small>>
+</small>
