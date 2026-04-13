@@ -2,6 +2,14 @@
 April 23, 2026
 The GEN Donald R. Keith Memorial Capstone Conference is a forum for undergraduate students in systems engineering and related disciplines to present their capstone work to professionals, scholars, clients, and fellow students from other colleges and universities. It invites and attracts undergrads to compete for presentation awards along with cadets from the Department of Systems Engineering at the United States Military Academy (USMA).
 
+## Conference Program
+<a href="/templates/2026_GDRKMCC_Program.pdf" download>
+  📄 Download Program (pdf)
+</a>
+<small>
+If the file opens in your browser, right-click → “Save As”
+</small>
+
 ## 2026 Conference Deadlines
 
 - Papers due: 13 March 2026
