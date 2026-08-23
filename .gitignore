@@ -1,0 +1,15 @@
+.DS_Store
+.claude/
+
+# Raw source materials used to build this site (not the site itself).
+# Excluded because: the kickoff deck is 500+ MB (would break a GitHub push)
+# and several of these files contain internal/course logistics (team room
+# assignments, honors roster, etc.) that shouldn't go in a public repo.
+/GDRKMCC-27_Paper_Template.docx
+/Overleaf_LaTex_ConferencePaperTemplate.pdf
+/Capstone Conference Photos 25.docx
+/Capstone Conference Photos 26.docx
+/SDAC_Branding_Guide_21.pdf
+/SDAC Information Sheet_AY27.pptx
+/AY27 USMA DSE Capstone Kick-off.pptx
+/Web/

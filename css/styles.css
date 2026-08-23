@@ -1,0 +1,512 @@
+/* GEN Donald R. Keith Memorial Capstone Conference
+   Palette and type sourced from the SDAC branding guide.
+   Body/accent typeface (Jost) substitutes for the guide's licensed
+   Termina/Brandon Grotesque, which aren't freely embeddable on the web. */
+
+:root {
+  --gold: #D5BA8C;
+  --gold-dark: #B99A61;
+  --gray: #B2B2B2;
+  --black: #2D2A26;
+  --charcoal: #3A362F;
+  --bg: #F5F2EC;
+  --white: #FFFFFF;
+
+  --font-heading: 'Lora', Georgia, serif;
+  --font-body: 'Jost', 'Segoe UI', system-ui, sans-serif;
+
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 1.5rem;
+  --space-4: 2rem;
+  --space-6: 3rem;
+  --space-8: 4rem;
+
+  --max-width: 1140px;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--black);
+  background: var(--bg);
+  line-height: 1.6;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-heading);
+  color: var(--black);
+  line-height: 1.2;
+  margin: 0 0 var(--space-2);
+}
+
+h2 { font-size: 2rem; }
+h3 { font-size: 1.15rem; }
+
+p { margin: 0 0 var(--space-2); }
+
+a { color: var(--gold-dark); }
+
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-3);
+}
+
+.eyebrow {
+  font-family: var(--font-body);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  color: var(--gold-dark);
+  margin-bottom: var(--space-1);
+}
+
+/* ---- Header / Nav ---- */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(245, 242, 236, 0.9);
+  backdrop-filter: blur(6px);
+  transition: box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.site-header.scrolled {
+  background: var(--bg);
+  box-shadow: 0 2px 12px rgba(45, 42, 38, 0.12);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--space-2);
+  padding-bottom: var(--space-2);
+}
+
+.brand img {
+  height: 44px;
+  display: block;
+}
+
+.site-nav {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.site-nav a {
+  color: var(--black);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding-bottom: 4px;
+  border-bottom: 2px solid transparent;
+}
+
+.site-nav a:hover,
+.site-nav a.active {
+  border-bottom-color: var(--gold-dark);
+  color: var(--gold-dark);
+}
+
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-1);
+}
+
+.nav-toggle span {
+  width: 24px;
+  height: 2px;
+  background: var(--black);
+  display: block;
+}
+
+/* ---- Hero ---- */
+
+.hero {
+  background-size: cover;
+  background-position: center;
+  color: var(--white);
+  padding: var(--space-8) 0;
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+}
+
+.hero h1 {
+  color: var(--white);
+  font-size: 2.6rem;
+  max-width: 20ch;
+}
+
+.hero .eyebrow { color: var(--gold); }
+
+.hero-tagline {
+  font-size: 1.1rem;
+  max-width: 55ch;
+}
+
+.hero-date {
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.hero-ctas {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  flex-wrap: wrap;
+}
+
+/* ---- Buttons ---- */
+
+.btn {
+  display: inline-block;
+  padding: 0.85rem 1.6rem;
+  border-radius: 2px;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.btn-primary {
+  background: var(--gold);
+  color: var(--black);
+}
+
+.btn-primary:hover { background: var(--gold-dark); }
+
+.btn-secondary {
+  background: transparent;
+  color: var(--white);
+  border: 1px solid var(--white);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.section .btn-secondary {
+  color: var(--black);
+  border-color: var(--black);
+}
+
+.section .btn-secondary:hover {
+  background: rgba(45, 42, 38, 0.06);
+}
+
+/* ---- Stats strip ---- */
+
+.stats-strip {
+  background: var(--black);
+  color: var(--white);
+  padding: var(--space-4) 0;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-3);
+  text-align: center;
+}
+
+.stat-num {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  color: var(--gold);
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: var(--gray);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* ---- Sections ---- */
+
+.section {
+  padding: var(--space-8) 0;
+}
+
+.section-alt {
+  background: var(--white);
+}
+
+.about-grid,
+.venue-grid,
+.proceedings-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: var(--space-6);
+  align-items: center;
+}
+
+.about-image img,
+.venue-media img,
+.proceedings-media img {
+  width: 100%;
+  border-radius: 4px;
+  display: block;
+}
+
+.venue-media {
+  display: grid;
+  gap: var(--space-2);
+}
+
+/* ---- Timeline ---- */
+
+.no-late {
+  display: inline-block;
+  font-weight: 600;
+  background: var(--gold);
+  color: var(--black);
+  padding: 0.4rem 0.9rem;
+  border-radius: 2px;
+  margin-bottom: var(--space-4);
+}
+
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 6px;
+  bottom: 6px;
+  width: 2px;
+  background: var(--gray);
+}
+
+.timeline-item {
+  position: relative;
+  padding-left: var(--space-6);
+  padding-bottom: var(--space-4);
+}
+
+.timeline-item:last-child { padding-bottom: 0; }
+
+.timeline-dot {
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--gold);
+  border: 2px solid var(--black);
+}
+
+.timeline-item-final .timeline-dot {
+  background: var(--black);
+}
+
+.timeline-date {
+  display: block;
+  font-weight: 600;
+  color: var(--gold-dark);
+  margin-bottom: 0.2rem;
+}
+
+.timeline-content h3 { margin-bottom: 0.2rem; }
+.timeline-content p { margin-bottom: 0; color: var(--charcoal); }
+
+/* ---- Submit cards ---- */
+
+.submit-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.submit-card {
+  background: var(--white);
+  border: 1px solid var(--gray);
+  border-radius: 4px;
+  padding: var(--space-3);
+}
+
+.submit-card h3 { font-size: 1rem; }
+.submit-card p { font-size: 0.9rem; margin-bottom: 0; color: var(--charcoal); }
+
+.section-alt .submit-card { background: var(--bg); }
+
+/* ---- Spec table ---- */
+
+.spec-table-wrap,
+.table-wrap {
+  overflow-x: auto;
+  margin-bottom: var(--space-3);
+}
+
+.spec-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.spec-table th,
+.spec-table td {
+  text-align: left;
+  padding: 0.65rem var(--space-2);
+  border-bottom: 1px solid var(--gray);
+  font-size: 0.95rem;
+}
+
+.spec-table th {
+  width: 220px;
+  font-weight: 600;
+  color: var(--black);
+}
+
+.template-ctas {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-2);
+}
+
+.template-hint {
+  font-size: 0.9rem;
+  color: var(--charcoal);
+}
+
+/* ---- Agenda table ---- */
+
+.agenda-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--white);
+}
+
+.agenda-table th,
+.agenda-table td {
+  text-align: left;
+  padding: 0.75rem var(--space-2);
+  border-bottom: 1px solid var(--bg);
+}
+
+.agenda-table th {
+  background: var(--black);
+  color: var(--white);
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.agenda-table tr:nth-child(even) td {
+  background: var(--bg);
+}
+
+/* ---- CTA section ---- */
+
+.cta-section { background: var(--black); color: var(--white); }
+.cta-inner { max-width: 640px; text-align: center; margin: 0 auto; }
+.cta-inner h2 { color: var(--white); }
+
+/* ---- Footer ---- */
+
+.site-footer {
+  background: var(--black);
+  color: var(--gray);
+  padding: var(--space-6) 0;
+  text-align: center;
+}
+
+.footer-logo {
+  height: 60px;
+  margin-bottom: var(--space-3);
+}
+
+.site-footer a { color: var(--gold); }
+
+.footer-year {
+  margin-top: var(--space-3);
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+/* ---- Responsive ---- */
+
+@media (max-width: 1023px) {
+  .about-grid,
+  .venue-grid,
+  .proceedings-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .submit-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .nav-toggle { display: flex; }
+
+  .site-nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--bg);
+    flex-direction: column;
+    padding: var(--space-2) var(--space-3);
+    box-shadow: 0 8px 12px rgba(45, 42, 38, 0.1);
+  }
+
+  .site-nav.open { display: flex; }
+
+  .hero h1 { font-size: 1.9rem; }
+
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+
+  .submit-cards { grid-template-columns: 1fr; }
+
+  .spec-table th { width: 150px; }
+
+  /* Agenda table collapses to stacked cards */
+  .agenda-table thead { display: none; }
+
+  .agenda-table tr {
+    display: block;
+    margin-bottom: var(--space-2);
+    border: 1px solid var(--gray);
+    border-radius: 4px;
+  }
+
+  .agenda-table td {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-2);
+    border-bottom: 1px solid var(--bg);
+  }
+
+  .agenda-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: var(--charcoal);
+  }
+}
