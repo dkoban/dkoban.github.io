@@ -1,5 +1,6 @@
 .DS_Store
 .claude/
+~$*
 
 # Raw source materials used to build this site (not the site itself).
 # Excluded because: the kickoff deck is 500+ MB (would break a GitHub push)

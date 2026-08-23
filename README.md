@@ -8,10 +8,9 @@ Most content on this site is real, pulled from files provided for AY27: the subm
 
 A few things are still placeholders because they weren't available yet:
 
-- The **Microsoft CMT submission link** (hero and `#submit` section)
-- The **exact venue name, address, and map** (`#venue` section)
 - **Contact email/phone** for the conference chair (formatting section + footer)
-- **Day-of schedule times** (`#schedule` section currently has `[TIME]`/`[BUILDING NAME]` tokens)
+
+Everything else — CMT link, venue (Jefferson Hall/Mahan Hall/Eisenhower Hall), venue map, and day-of schedule times — is filled in with real, confirmed information.
 
 Find every remaining placeholder with:
 
