@@ -6,25 +6,41 @@ Static site (plain HTML/CSS/JS, no build step). Open `index.html` directly in a 
 
 Most content on this site is real, pulled from files provided for AY27: the submission timeline, paper deliverables, formatting requirements, conference photos, SDAC logo/branding, and the 2026 proceedings link.
 
-A few things are still placeholders because they weren't available yet:
+All placeholders have been filled in, including the CMT link, venue (Jefferson Hall/Mahan Hall/Eisenhower Hall), venue map, day-of schedule times, and the conference chair's contact email/phone (formatting section + footer).
 
-- **Contact email/phone** for the conference chair (formatting section + footer)
-
-Everything else — CMT link, venue (Jefferson Hall/Mahan Hall/Eisenhower Hall), venue map, and day-of schedule times — is filled in with real, confirmed information.
-
-Find every remaining placeholder with:
+To double-check nothing new has slipped in, search for leftover placeholders with:
 
 ```
-grep -rn "TODO:\|\[" index.html
+grep -rn "TODO:" index.html
 ```
 
-Replace the bracketed tokens and follow the `TODO:` comments, then remove the comment once done.
+## Paper templates
+
+Two templates live in `files/` and both carry the same front matter, including the required **AI Use Disclosure** statement:
+
+- `GDRKMCC-27_Paper_Template.docx` — the official Word template.
+- `latex-template/` (`main.tex` + `references.bib`) — a LaTeX version that mirrors the Word formatting (Times, 10pt body, 0.75/0.75/1.25/0.75" margins, numbered 11pt headings, APA references via `biblatex-apa`). Compile with pdfLaTeX + Biber.
+- `GDRKMCC-27_LaTeX_Template.zip` — the zipped copy of `latex-template/` that the site links to. **Rebuild it whenever you edit `main.tex` or `references.bib`:**
+
+  ```
+  cd files/latex-template && rm -f ../GDRKMCC-27_LaTeX_Template.zip && zip -X ../GDRKMCC-27_LaTeX_Template.zip main.tex references.bib
+  ```
+
+The site's "Open LaTeX Template in Overleaf" button uses Overleaf's open-in-Overleaf link (`https://www.overleaf.com/docs?snip_uri=<zip URL>`), so authors get their own copy of the template in Overleaf without you needing to own a gallery template. It points at the zip's URL on the live site, so it only works once the zip is published to `dkoban.github.io`.
+
+## Generative AI policy
+
+Every paper must include this statement directly after the Author Note:
+
+> Generative AI tools were used to support the following activities: ________. The authors reviewed and verified all generated material, consulted the original sources, and accept responsibility for all claims, citations, analysis, and conclusions.
+
+The conference chair screens submissions with [Pangram](https://www.pangram.com), and papers that show excessive reliance on generative AI for writing may be disqualified from best paper awards. This policy appears on the site (`#formatting`) and in both templates; keep all three in sync if the wording changes.
 
 ## Updating for next year
 
 - Colors/fonts live in `css/styles.css` under `:root` — pulled from `SDAC_Branding_Guide_21.pdf` (gold `#D5BA8C`, gray `#B2B2B2`, black `#2D2A26`). Body font is Jost (free), substituting for the brand guide's licensed Termina/Brandon Grotesque.
 - Photos live in `images/photos/` — swap in new ones each year as needed.
-- The Word paper template lives in `files/`; update it and the on-page spec table in `index.html` (`#formatting`) if requirements change.
+- The Word and LaTeX paper templates live in `files/`; update both, plus the on-page spec table in `index.html` (`#formatting`), if requirements change.
 - Dates live in the `#dates` timeline in `index.html` — update each year's milestones there.
 
 ## Source materials (not part of the published site)
