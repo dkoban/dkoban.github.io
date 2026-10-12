@@ -1,0 +1,192 @@
+% =====================================================================
+% GEN Donald R. Keith Memorial Capstone Conference (GDRKMCC) -- AY27
+% LaTeX paper template
+%
+% Mirrors the official MS Word template (GDRKMCC-27_Paper_Template.docx).
+% Compile with pdfLaTeX + Biber (Overleaf: Menu > Compiler = pdfLaTeX).
+% Papers are limited to 6 pages; do not add page numbers.
+% =====================================================================
+\documentclass[10pt,letterpaper]{article}
+
+% ---- Page layout: 8.5" x 11"; margins L 0.75", R 0.75", T 1.25", B 0.75"
+\usepackage[letterpaper,left=0.75in,right=0.75in,top=1.25in,bottom=0.75in]{geometry}
+\pagestyle{empty}                 % no page numbers
+
+% ---- Fonts: Times New Roman equivalent, 10pt body
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{newtxtext,newtxmath}
+\usepackage{microtype}
+
+% ---- Paragraphs: 0.5" first-line indent, no space between paragraphs
+\setlength{\parindent}{0.5in}
+\setlength{\parskip}{0pt}
+\usepackage{indentfirst}         % indent the first paragraph after a heading too
+
+% ---- Section headings: 11pt bold, numbered, at most three levels
+\usepackage{titlesec}
+\titleformat{\section}{\centering\fontsize{11}{13}\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\fontsize{11}{13}\bfseries}{\thesubsection}{0.5em}{}
+\titleformat{\subsubsection}{\fontsize{11}{13}\bfseries\itshape}{\thesubsubsection}{0.5em}{}
+\titlespacing*{\section}{0pt}{20pt}{10pt}
+\titlespacing*{\subsection}{0pt}{10pt}{2pt}
+\titlespacing*{\subsubsection}{0pt}{10pt}{2pt}
+\setcounter{secnumdepth}{3}
+
+% ---- Tables and figures: numbered, captioned, text no smaller than 9pt
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage[font=small,labelsep=period,justification=centering]{caption}
+\captionsetup[table]{position=above,skip=4pt}
+\captionsetup[figure]{position=below,skip=4pt}
+
+% ---- Math: equations numbered (1), (2), ... flush right
+\usepackage{amsmath}
+
+% ---- Citations: APA style, hanging-indent reference list
+\usepackage[american]{babel}
+\usepackage{csquotes}
+\usepackage[style=apa,backend=biber]{biblatex}
+\addbibresource{references.bib}
+
+\usepackage[hidelinks]{hyperref}
+
+% ---- Front-matter helper
+\newcommand{\frontblock}[2]{\noindent\textbf{#1:} #2\par\vspace{10pt}}
+
+\begin{document}
+
+% =====================================================================
+% TITLE AND AUTHORS
+% =====================================================================
+\begin{center}
+  {\fontsize{14}{17}\bfseries Paper Title\par}
+  \vspace{10pt}
+  {\fontsize{12}{14}\bfseries (First Name Last Name) Author\textsuperscript{1},
+   Author\textsuperscript{2}, and Author\textsuperscript{3}\par}
+  \vspace{10pt}
+  \textsuperscript{1}Department of Systems Engineering, United States Military Academy,
+  West Point, New York 10996\par
+  \vspace{4pt}
+  \textsuperscript{2}Author2 Affiliation (if different from Author\textsuperscript{1})\par
+  \vspace{4pt}
+  \textsuperscript{3}Author3 Affiliation (if different from Authors \textsuperscript{1\&2})\par
+  \vspace{10pt}
+  Corresponding author's Email: \href{mailto:xyz@abc.com}{xyz@abc.com}
+  (use an email that will not expire after graduation)
+\end{center}
+\vspace{10pt}
+
+{\setlength{\parindent}{0pt}
+\frontblock{Author Note}{A brief biographical sketch of the contributing authors goes here.
+It may include acknowledgment of funding sources, expressions of gratitude to research
+assistants, and contact information for the author who will handle requests. Projects
+written by cadets and ROTC students should include a disclosure statement similar to,
+``The views expressed herein are those of the authors and do not reflect the position of
+the United States Military Academy, the Department of the Army, or the Department of
+Defense.''}
+
+% REQUIRED. Every paper must include an AI Use Disclosure, even if no AI was used.
+% Keep only the statement that applies (filling in the blank with the specific
+% activities, e.g., brainstorming, code debugging, editing) and delete the rest of
+% the instructional text in this block.
+\frontblock{AI Use Disclosure}{All papers must include one of the following statements,
+whether or not AI was used. If generative AI tools were used, complete and keep:
+\textit{``Generative AI tools were used to support the following activities:
+\underline{\hspace{3cm}}. The authors reviewed and verified all generated material,
+consulted the original sources, and accept responsibility for all claims, citations,
+analysis, and conclusions.''} If no generative AI tools were used, write:
+\textit{``No generative AI tools were used in the preparation of this paper.''}
+The conference chair will screen all submissions for AI-generated text using Pangram
+(pangram.com). Papers that show excessive reliance on generative AI for writing may be
+disqualified from competing for best paper awards.}
+
+\frontblock{Abstract}{This template illustrates preparation of your paper using \LaTeX.
+Papers are limited to 6 pages on 8\,\textonehalf{} $\times$ 11 inch paper, pages should not
+be numbered, and the abstract should not exceed 150 words. Paper margins are left
+0.75 inches, right 0.75 inches, top 1.25 inches, and bottom 0.75 inches. The paper begins
+with a title in bold 14pt Times New Roman, followed by the details for each author in
+12pt Times New Roman. Section titles are bolded in 11pt Times New Roman and the body of the
+paper is typed in 10pt Times New Roman. This template already applies all of these
+settings. Submit the compiled PDF (maximum 3 MB) named lastname.pdf, or lastname1.pdf and
+lastname2.pdf if you are submitting more than one paper. If you have any questions on the format, please direct your queries to
+\href{mailto:donald.koban@westpoint.edu}{donald.koban@westpoint.edu}.}
+
+\noindent\textit{Keywords:} Keyword1, Keyword2, Keyword3\par
+}
+
+% =====================================================================
+% BODY
+% =====================================================================
+\section{Heading Level 1}
+
+All major headings are numbered and set in 11pt bold. The first paragraph after any
+section title is indented 0.5 inches with no line space before it.
+
+All subsequent paragraphs are indented the same way with no line spacing between
+paragraphs. Here begins the body of your paper and your Introduction section. The body is
+typically divided into sections with headings such as Method, Results, and Discussion.
+
+\subsection{Heading Level 2}
+
+The first paragraph after any section title should be indented as here.
+
+The second and all subsequent paragraphs should also be indented (0.5 inches).
+
+\subsubsection{Heading Level 3}
+
+Avoid using more than three levels of headings.
+
+\section{Equations}
+
+Equations are numbered consecutively beginning with (1) to the end of the paper. The number
+is enclosed in parentheses and set flush right on the same line as the equation.
+\begin{equation}
+  \hat{y} = \beta_0 + \sum_{i=1}^{n} \beta_i x_i
+\end{equation}
+
+\section{Figures and Tables}
+
+All tables are numbered consecutively and captioned; the caption is centered above the
+table as shown in Table~\ref{tab:example}. The body of the table should be no smaller than
+9pt.
+
+\begin{table}[t]
+  \centering
+  \caption{Correlations Among and Descriptive Statistics for Key Study Variables}
+  \label{tab:example}
+  \small
+  \begin{tabular}{lcccc}
+    \toprule
+    Variable  & \textit{M} (\textit{SD}) & Sex & Age  & Income \\
+    \midrule
+    Sex       & 1.53 (0.50)   &     & .07  & $-$.09 \\
+    Age       & 31.88 (10.29) &     &      & .08    \\
+    Income    & 2.60 (1.57)   &     &      &        \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+All figures should be positioned at the top of the page when possible. Figures are numbered
+consecutively and captioned; the caption is centered under the figure as shown in
+Figure~\ref{fig:example}. All text within a figure should be no smaller than 9pt.
+
+\begin{figure}[t]
+  \centering
+  % Replace the box below with: \includegraphics[width=0.6\linewidth]{your-figure}
+  \fbox{\parbox[c][1.2in][c]{0.6\linewidth}{\centering Figure placeholder}}
+  \caption{Title of Figure}
+  \label{fig:example}
+\end{figure}
+
+\section{Citations and References}
+
+Within the text, cite references with the last name of the author(s) and the year of
+publication. Use \verb|\textcite{}| for narrative citations, as in \textcite{sage2009},
+and \verb|\parencite{}| for parenthetical citations \parencite{blanchard2011}. Add
+your sources to \texttt{references.bib}; the reference list below is generated
+automatically in APA style with hanging indents.
+
+\printbibliography
+
+\end{document}
