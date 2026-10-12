@@ -30,9 +30,13 @@ The site's "Open LaTeX Template in Overleaf" button uses Overleaf's open-in-Over
 
 ## Generative AI policy
 
-Every paper must include this statement directly after the Author Note:
+Every paper must include an AI Use Disclosure directly after the Author Note, **whether or not AI was used**. Authors who used generative AI fill in and keep:
 
 > Generative AI tools were used to support the following activities: ________. The authors reviewed and verified all generated material, consulted the original sources, and accept responsibility for all claims, citations, analysis, and conclusions.
+
+Authors who did not use generative AI write instead:
+
+> No generative AI tools were used in the preparation of this paper.
 
 The conference chair screens submissions with [Pangram](https://www.pangram.com), and papers that show excessive reliance on generative AI for writing may be disqualified from best paper awards. This policy appears on the site (`#formatting`) and in both templates; keep all three in sync if the wording changes.
 
