@@ -16,7 +16,7 @@ grep -rn "TODO:" index.html
 
 ## Paper templates
 
-Two templates live in `files/` and both carry the same front matter, including the required **AI Use Disclosure** statement:
+Two templates live in `files/` and both carry the same front matter, including the required AI use disclosure in the Acknowledgments section:
 
 - `GDRKMCC-27_Paper_Template.docx` — the official Word template.
 - `latex-template/` (`main.tex` + `references.bib`) — a LaTeX version that mirrors the Word formatting (Times, 10pt body, 0.75/0.75/1.25/0.75" margins, numbered 11pt headings, APA references via `biblatex-apa`). Compile with pdfLaTeX + Biber.
@@ -30,7 +30,7 @@ The site's "Open LaTeX Template in Overleaf" button uses Overleaf's open-in-Over
 
 ## Generative AI policy
 
-Every paper must include an AI Use Disclosure directly after the Author Note, **whether or not AI was used**. Authors who used generative AI fill in and keep:
+Every paper must include an AI use disclosure in an Acknowledgments section at the end of the paper (just before References), **whether or not AI was used**. Authors who used generative AI fill in and keep:
 
 > Generative AI tools were used to support the following activities: ________. The authors reviewed and verified all generated material, consulted the original sources, and accept responsibility for all claims, citations, analysis, and conclusions.
 
