@@ -59,18 +59,53 @@
 % =====================================================================
 % TITLE AND AUTHORS
 % =====================================================================
+% ---------------------------------------------------------------------
+% AUTHORS AND AFFILIATION -- read before editing
+%
+% DEFAULT: one shared affiliation. Most capstone teams are all from the
+% Department of Systems Engineering at USMA, so list every author on one line
+% (First Last, separated by commas, "and" before the last name) and leave the
+% single affiliation line below as is. Do NOT add superscript numbers when all
+% authors share the same affiliation.
+%
+% MULTIPLE AFFILIATIONS -- use ONLY if at least one author (e.g., an outside
+% sponsor or advisor) has a different affiliation:
+%   1. Comment out every line of the DEFAULT block below (from the DEFAULT
+%      marker down to the MULTIPLE AFFILIATIONS marker). In Overleaf, select
+%      the lines and press Ctrl+/ (Cmd+/ on a Mac) to toggle comments.
+%   2. Uncomment every line of the MULTIPLE AFFILIATIONS block the same way.
+%   3. Number each DISTINCT affiliation once: 1, 2, 3, ... List each
+%      affiliation only one time, even if several authors share it.
+%   4. After each author's name, add \textsuperscript{N}, where N is the number
+%      of that author's affiliation. Authors who share an affiliation share
+%      the same number.
+%   5. Check: every number used after a name has exactly one affiliation line,
+%      and every affiliation line is used by at least one author.
+% Example: three USMA authors and one sponsor ->
+%   Ann Lee\textsuperscript{1}, Bo Kim\textsuperscript{1}, Cy Diaz\textsuperscript{1},
+%   and Dee Fox\textsuperscript{2}
+%   \textsuperscript{1}Department of Systems Engineering, United States Military Academy, ...
+%   \textsuperscript{2}Army Futures Command, Austin, Texas 78701
+% ---------------------------------------------------------------------
 \begin{center}
   {\fontsize{14}{17}\bfseries Paper Title\par}
   \vspace{10pt}
-  {\fontsize{12}{14}\bfseries (First Name Last Name) Author\textsuperscript{1},
-   Author\textsuperscript{2}, and Author\textsuperscript{3}\par}
+
+  % ---- DEFAULT: all authors share one affiliation -------------------
+  {\fontsize{12}{14}\bfseries First Last, First Last, First Last, and First Last\par}
   \vspace{10pt}
-  \textsuperscript{1}Department of Systems Engineering, United States Military Academy,
+  Department of Systems Engineering, United States Military Academy,
   West Point, New York 10996\par
-  \vspace{4pt}
-  \textsuperscript{2}Author2 Affiliation (if different from Author\textsuperscript{1})\par
-  \vspace{4pt}
-  \textsuperscript{3}Author3 Affiliation (if different from Authors \textsuperscript{1\&2})\par
+
+  % ---- MULTIPLE AFFILIATIONS: use only if affiliations differ -------
+  % {\fontsize{12}{14}\bfseries First Last\textsuperscript{1}, First Last\textsuperscript{1},
+  %  and First Last\textsuperscript{2}\par}
+  % \vspace{10pt}
+  % \textsuperscript{1}Department of Systems Engineering, United States Military Academy,
+  % West Point, New York 10996\par
+  % \vspace{4pt}
+  % \textsuperscript{2}Second Affiliation, City, State ZIP\par
+
   \vspace{10pt}
   Corresponding author's Email: \href{mailto:xyz@abc.com}{xyz@abc.com}
   (use an email that will not expire after graduation)
